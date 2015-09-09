@@ -1,0 +1,29 @@
+<div class="menu-wrap" ng-class="{'ios': isIOS()}">
+
+  <ul ng-show="menuType === 'main'">
+    <li class="q-icons-catalog-info" ng-fast-touch="showCatalogInfo()">Catalog Information</li>
+    <li class="q-icons-list-view" 
+        ng-fast-touch="toggleViewStyle(STYLE_LIST)" 
+        ng-show="listStyle === STYLE_GRID && listViewChangeEnabled">List view</li>
+    <li class="q-icons-gallery-view" 
+        ng-fast-touch="toggleViewStyle(STYLE_GRID)" 
+        ng-show="listStyle === STYLE_LIST && listViewChangeEnabled">Gallery view</li>
+  </ul>
+  
+  <ul ng-show="menuType === 'main'">
+    <li class="q-icons-non-favorite" ng-fast-touch="showFavorites()">Favorites</li>
+    <li class="q-icons-near-me" ng-fast-touch="showNearMe()" style="display: none">Near Me</li>
+    <li class="q-icons-sort-ascend" ng-class="{'sort-selected': sortSelected === 'A'}" ng-fast-touch="sort('A')" ng-show="isSortable">Sort A-Z</li>
+    <li class="q-icons-sort-descend" ng-class="{'sort-selected': sortSelected === 'D'}" ng-fast-touch="sort('D')" ng-show="isSortable">Sort Z-A</li>
+  </ul>
+  
+  <ul ng-show="menuType === 'detail'">
+    <li class="q-icons-non-favorite" ng-fast-touch="loveIt()" style="display: none">I Love It</li>
+    <li class="q-icons-share" ng-fast-touch="share()">Share</li>
+  </ul>
+  
+  <ul ng-hide="hideChangeCatalog">
+    <li class="q-icons-catalog" ng-fast-touch="changeCatalog()">Change Catalog</li>
+  </ul>
+  
+</div>

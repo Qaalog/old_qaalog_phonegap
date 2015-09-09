@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="D:\OpenServer\domains\localhost\Qaalog\platforms\android\build\intermediates\exploded-aar\android\CordovaLib\unspecified\debug\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="a09dca5c2c9b98a8625ad6ef724268780c75a59e">
+        <dex dex="D:\OpenServer\domains\localhost\Qaalog\platforms\android\build\intermediates\pre-dexed\debug\classes-5991e0f430b6ba0dbaeb22f7c363badf89ec30fe.jar" />
+    </item>
+    <item
+        jar="D:\OpenServer\domains\localhost\Qaalog\platforms\android\libs\com.google.zxing.client.android.captureactivity.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="daca75b7de34e1ca229682f2cd54b54e1c324be6">
+        <dex dex="D:\OpenServer\domains\localhost\Qaalog\platforms\android\build\intermediates\pre-dexed\debug\com.google.zxing.client.android.captureactivity-c12067e9c1232bd6cda4d9dbd11dffe17b451b0e.jar" />
+    </item>
+
+</items>

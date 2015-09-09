@@ -1,0 +1,3 @@
+D:\OpenServer\domains\localhost\Qaalog\platforms\android\build\intermediates\classes\debug
+D:\OpenServer\domains\localhost\Qaalog\platforms\android\build\intermediates\pre-dexed\debug\classes-5991e0f430b6ba0dbaeb22f7c363badf89ec30fe.jar
+D:\OpenServer\domains\localhost\Qaalog\platforms\android\build\intermediates\pre-dexed\debug\com.google.zxing.client.android.captureactivity-c12067e9c1232bd6cda4d9dbd11dffe17b451b0e.jar
