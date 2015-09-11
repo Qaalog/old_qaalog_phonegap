@@ -233,9 +233,11 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
       $scope.searchModel = {};
       $scope.isSearchPanelVisiable = true;
       page.hideExtendedHeader();
+      var el = document.getElementById('search-input');
       $timeout(function(){
-        document.getElementById('search-input').focus();
-      });
+          console.log('focus',el);
+        el.focus();
+      },500);
       if (!startSearchingFlag) {
         page.navigatorPush($scope.stopSearching);
         startSearchingFlag = true;
@@ -343,9 +345,26 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
       }
     };
 
+    $scope.onSearchInputFocus = function() {
+      console.log('!!!FOCUS!!!');
+    };
+
     $timeout(function(){
       page.show(config.startPage,{},false);
     });
+
+
+
+    //$timeout(function() {
+    //  var searchInput = document.getElementById('search-input');
+    //  searchInput.addEventListener('focus',function(){
+    //
+    //  });
+    //
+    //  searchInput.addEventListener('blur',function(){
+    //
+    //  });
+    //},2000);
     
 }]);
 

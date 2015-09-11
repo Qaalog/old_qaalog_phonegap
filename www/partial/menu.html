@@ -17,7 +17,7 @@
     <li class="q-icons-sort-descend" ng-class="{'sort-selected': sortSelected === 'D'}" ng-fast-touch="sort('D')" ng-show="isSortable">Sort Z-A</li>
   </ul>
   
-  <ul ng-show="menuType === 'detail'">
+  <ul ng-show="menuType === 'detail' && isShareShow">
     <li class="q-icons-non-favorite" ng-fast-touch="loveIt()" style="display: none">I Love It</li>
     <li class="q-icons-share" ng-fast-touch="share()">Share</li>
   </ul>

@@ -396,11 +396,18 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
       });
       
     };
+    var loadingItem = {};
     
     $scope.openCategory = function(item,treeLevel,event) {
       event = event || {stopPropagation: function(){}};
       if (item.lastLevel < 1) {
+
+        window.stop();
+        loadingItem.isLoading = false;
+        loadingItem = item;
+
         item.isLoading = true;
+
         if (!item.secondLevel) {
           item = item || {};
           item.db = $scope.currentParams.db;
@@ -637,7 +644,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
 
       if (!value) value = '';
       value = value + '';
-      if (!$scope.barcodeAutocomplete[0]) {
+      if (!$scope.barcodeAutocomplete[0] && !device.isIOS()) {
         page.navigatorPush(function() {
           $scope.barcodeAutocomplete = [];
           $scope.barcode.value = null;
@@ -686,7 +693,8 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
         }
         stopAutosearch = false;
       },300);
-      page.navigatorPop();
+      if (!device.isIOS())
+        page.navigatorPop();
     };
 
     $scope.onBarcodeKeyPress = function(event) {
@@ -699,8 +707,9 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     $scope.clearBarcodeInput = function() {
       stopAutosearch = true;
       $timeout(function(){
-        if (device.isIOS())
+        if (device.isIOS()) {
           document.getElementById('barcode-input').blur();
+        }
         $scope.barcode.value = '';
         $scope.clearBarcodeAutocomplete();
       });
@@ -720,15 +729,15 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     $scope.selectProductByBarcode = function(item) {
       // page.navigatorPop();
      // barcodeAutocompleteClearFlag = true;
-     if (device.isIOS())
-          document.getElementById('barcode-input').blur();
-      console.log('test');
-      stopAutosearch = true;
+     
+      //stopAutosearch = true;
       item = item || {};
       item.id = item.productId;
       delete item.productId;
+      $scope.clearBarcodeInput();
       $scope.selectProduct(item);
-      $scope.clearBarcodeAutocomplete();
+//      if (device.isIOS())
+//          document.getElementById('barcode-input').blur();
       //document.getElementById('barcode-input').blur();
     };
     

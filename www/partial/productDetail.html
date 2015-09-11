@@ -53,10 +53,10 @@
       </li>
       
       
-      <li ng-show="productDetailsList['email']">
+      <li ng-show="productDetailsList['email']" ng-fast-touch="sendEmail(productDetailsList['email'])">
         <div>
           <i class="q-icon-mail"></i>
-          <a href="{{'mailto:'+productDetailsList['email']}}">{{productDetailsList.email}}</a>
+          <a href="javascript:;">{{productDetailsList.email}}</a>
         </div>
       </li>
       
@@ -109,6 +109,7 @@
             ng-fast-touch="navigateGallery(null,$index)"></li>
       </ol>
       <i class="close q-icons-close" ng-fast-touch="swipeGalleryExit()" ng-show="galleryCloseButtonShow"></i>
+      
     </div>
   </div>
   

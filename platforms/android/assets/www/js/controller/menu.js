@@ -17,6 +17,10 @@ qaalog.controller('menu',['$scope','page','menu','share','device',function($scop
       page.hideLoader();
       
     });
+
+  menu.setShareShow = function(value) {
+    $scope.isShareShow = value;
+  };
     
     
     $scope.showCatalogInfo = function(outside) {

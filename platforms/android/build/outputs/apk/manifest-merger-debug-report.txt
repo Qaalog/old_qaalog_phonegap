@@ -12,7 +12,7 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 		INJECTED from AndroidManifest.xml:0:0
 	xmlns:android
-		ADDED from AndroidManifest.xml:2:126
+		ADDED from AndroidManifest.xml:2:125
 supports-screens
 ADDED from AndroidManifest.xml:3:5
 	android:largeScreens
@@ -49,7 +49,7 @@ ADDED from AndroidManifest.xml:7:5
 		ADDED from AndroidManifest.xml:7:18
 	android:icon
 		ADDED from AndroidManifest.xml:7:53
-activity#com.qaalog.dev1.MainActivity
+activity#com.qaalog.dev.MainActivity
 ADDED from AndroidManifest.xml:8:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:8:194

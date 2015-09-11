@@ -52,7 +52,9 @@
         <title>Qaalog</title>
     </head>
     <body ng-controller="main">
-      
+      <div class="search-background"
+           style="position: absolute; top:0;left:0;bottom:0;right:0;background: rgba(0,0,0,0.5);z-index:1;"
+           ng-show="isSearchPanelVisiable"></div>
       <header class="header" ng-swipe-header ng-class="{'ios':isIOS()}" ng-hide="headerIsHidden">
         <div class="top-wrap" id="top-wrap">
           <span class="back-btn q-icons-back" ng-fast-touch="onBack()" ng-show="canBack"></span>
@@ -79,15 +81,17 @@
       <div ng-hide="isLoaded" style="position: fixed; top: 0; left: 0; bottom:0;right:0;background: #ededed; z-index: 9999"></div>
 
       <div ng-hide="isStatusbarHidden" ng-class="{'statusbar':isIOS()}"></div>
-      <div class="search-wrap" ng-show="isSearchPanelVisiable">
+      <div class="search-wrap" ng-show="isSearchPanelVisiable" ng-class="{'ios':isIOS()}">
             <input type="text" 
                    class="search"
                    id="search-input"
                    ng-model="searchModel.value" 
-                   ng-change="onSearchChange()" 
+                   ng-change="onSearchChange()"
+                   ng-focus="onSearchInputFocus()"
                    ng-keypress="onSearch($event)"
                    />
-            <span class="search-close q-icons-close-search" ng-fast-touch="stopBlurSearching(searchModel.value);searchModel.value = '';onSearchChange();"></span>
+            <span class="search-close q-icons-close-search"                  
+                  ng-fast-touch="stopBlurSearching(searchModel.value);searchModel.value = '';onSearchChange();"></span>
             <div ng-show="tips[0]" class="search-tips">
               <div ng-repeat="tip in tips" 
                    class="search-item"

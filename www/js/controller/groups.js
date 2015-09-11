@@ -1,6 +1,7 @@
-qaalog.controller('groups',['$scope','page','network','httpAdapter',function($scope,page,network,httpAdapter){
+qaalog.controller('groups',['$scope','page','network','httpAdapter','device',function($scope,page,network,httpAdapter,device){
     
     var getProductHeaderChar;
+    $scope.isIOS = device.isIOS;
     
     var settings = { name:   'groups'
                    , title:  'groups'

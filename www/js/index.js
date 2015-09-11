@@ -46,16 +46,14 @@ var app = {
       target.src = 'img/error.png';
       //console.log('error',target);
     }
-  }
-   
-;
+  };
 
 app.initialize();
-
 if (navigator.userAgent.toLowerCase().indexOf('windows') > -1) {
   angular.element(document).ready(function() {
     app.wrapper = document.getElementsByClassName('content-wrapper')[0];
     app.wrapper.style.height = window.innerHeight+'px';
+
     angular.bootstrap(document, ['qaalog']);
   });
 }

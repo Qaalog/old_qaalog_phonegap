@@ -8,6 +8,7 @@ qaalog.service('menu',[function(){
     $menu.setListViewChangeEnabled = function(){};
     $menu.hideChangeCatalog = function(){};
     $menu.showCatalogInfo = function() {};
+    $menu.setShareShow = function(){};
     
     $menu.setParams = function(params) {
       currentParams = params;

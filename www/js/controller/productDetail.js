@@ -1,5 +1,5 @@
-qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$timeout','share','device',
-  function($scope,page,network,httpAdapter,$timeout,share,device){
+qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$timeout','share','device','menu',
+  function($scope,page,network,httpAdapter,$timeout,share,device,menu){
     
     var getProductDetails;
     var getFavoritesConfig;
@@ -55,9 +55,11 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     });
     
     onTabChange = function(view) {
+      menu.setShareShow(false);
       page.toggleShareIcon(false);
       switch (view) {
         case 'detail':
+          menu.setShareShow(true);
           page.hideNoResult();
           page.toggleShareIcon(true);
           $scope.detailSwitch = false;
@@ -101,6 +103,10 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
 
       window.open('tel:' + number,'_system');
 
+    };
+
+    $scope.sendEmail = function(email) {
+      window.open('mailto:' + email,'_system');
     };
     
     $scope.showProductDetails = function(item) {

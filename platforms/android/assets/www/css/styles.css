@@ -178,6 +178,10 @@ a:active {opacity: 0.9;}
     margin-top: -1em;
     line-height: 2em;
 }
+.search-wrap.ios::before,
+.search-wrap.ios .search-close {
+    margin-top: -1.1em;
+}
 .search-wrap:before {
 	content: "\e612";
 	left: 1em;
@@ -234,7 +238,7 @@ a:active {opacity: 0.9;}
     top: 6.25em;
 }
 .menu-wrap ul {
-	border-top: 0.05em solid transparent;
+	border-top: 0.1em solid transparent;
 	font-size: 1.85em;
 	padding: 1em 0;
 	margin: 0 1em;
@@ -262,7 +266,6 @@ a:active {opacity: 0.9;}
     right: 0;
     top: 2.6em;
     z-index: 9;
-
 }
 .catalog-title.ios {
     top: 3.6em;
@@ -273,8 +276,9 @@ a:active {opacity: 0.9;}
 }
 .category {
   	padding: 0.5em 0 0.5em 0.5em;
-  	overflow: hidden;
+  	/*overflow: hidden;*/
     display: table;
+    position: relative;
 }
 .category .cat-col {
     display: table-cell;
@@ -338,6 +342,7 @@ a:active {opacity: 0.9;}
 }
 .text-box {
     width: 12em;
+    padding-right: 2em;
     margin: 0 0 0 0.5em;
 }
 .list-view .prod-name {
@@ -360,11 +365,14 @@ a:active {opacity: 0.9;}
 }
 .cat-description {font-size: 0.75em;}
 .to-favorite {
-	float: right;
     font-size: 1.1em;
-    width: 1.74em;
-/*    height: 3.5em;
-    line-height: 3.5em;*/
+    right: -0.5em;
+    height: 3em;
+    line-height: 3em;
+    top: 50%;
+    margin-top: -1.5em;
+    position: absolute;
+    width: 3em;
     text-align: center;
 }
 .to-favorite:before {content: "\e60f";}
@@ -577,12 +585,23 @@ a:active {opacity: 0.9;}
     margin: 0.5em 0;
 }
 .gallery-wrap .close {
-    /*color: #fff;*/
     position: absolute;
-    bottom: 0;
-    right: 0;
-    font-size: 2.5em;
-    padding: 0.5em;
+    bottom: 0.25em;
+    right: 0.25em;
+    width: 5em;
+    height: 5em;
+    background-color: rgba(0,0,0,0.7);
+    -webkit-border-radius: 0.75em;
+    border-radius: 0.75em;
+}
+.gallery-wrap .close:before {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    font-size: 3em;
+
 }
 .gallery-wrap .gallery-middle-wrap {
     overflow: hidden;
@@ -708,6 +727,7 @@ a:active {opacity: 0.9;}
     /*height: 9em;*/
     display: table;
 }
+.list-view .products.ios {width: 30em;}
 .list-view .products .prod-col {
     display: table-cell;
     vertical-align: middle;
@@ -759,7 +779,7 @@ a:active {opacity: 0.9;}
     border-radius: 50%;
     -webkit-border-radius: 50%;
 }
-
+.list-view .ios .in-group {right: 1em;}
 .list-view .in-group .corner-wrap {
 /*    overflow: hidden;
     border-radius: 0 0 2em 0;

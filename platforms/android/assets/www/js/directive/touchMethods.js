@@ -15,17 +15,11 @@ qaalog.directive('ngFastTouch', function() {
     var isTouchSupported = 'ontouchstart' in window;
     var coords = {};
     var square = 10;
-    var scrollTimeout;
+    
     var onScroll = function() {
       scrollBlock = true;
-      if (scrollTimeout) window.clearTimeout(scrollTimeout);
-      scrollTimeout = window.setTimeout(function(){
-        scrollBlock = false;
-        scrollTimeout = false;
-      },300);
-
     };
-
+    
     if (firstFlag) {
       app.wrapper.addEventListener('scroll', onScroll);
       firstFlag = false;
@@ -34,10 +28,10 @@ qaalog.directive('ngFastTouch', function() {
     if (isTouchSupported) {
       
       element.on('touchstart', function(event) {
+        scrollBlock = false;
         var body = document.getElementsByTagName('body')[0];
-        var rect = body.getBoundingClientRect();
         coords = {x: event.changedTouches[0].screenX, y: event.changedTouches[0].screenY};
-        if (!scrollBlock) touchAllow = true;
+        touchAllow = true;
         timeout = window.setTimeout(function(){
           touchAllow = false;
         },1000);
@@ -54,7 +48,9 @@ qaalog.directive('ngFastTouch', function() {
             touchAllow = false;
             clearTimeout(timeout);
             window.setTimeout(function() {
-              fn();
+              if (!scrollBlock) {
+                fn();
+              }
             },50);
           }
         }
