@@ -2,7 +2,7 @@
 manifest
 ADDED from AndroidManifest.xml:2:1
 	package
-		ADDED from AndroidManifest.xml:2:100
+		ADDED from AndroidManifest.xml:2:101
 	android:versionName
 		ADDED from AndroidManifest.xml:2:72
 	android:hardwareAccelerated
@@ -12,7 +12,7 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 		INJECTED from AndroidManifest.xml:0:0
 	xmlns:android
-		ADDED from AndroidManifest.xml:2:125
+		ADDED from AndroidManifest.xml:2:126
 supports-screens
 ADDED from AndroidManifest.xml:3:5
 	android:largeScreens
@@ -162,3 +162,7 @@ uses-permission#android.permission.CALL_PHONE
 ADDED from AndroidManifest.xml:40:5
 	android:name
 		ADDED from AndroidManifest.xml:40:22
+uses-permission#android.permission.ACCESS_LOCATION_EXTRA_COMMANDS
+ADDED from AndroidManifest.xml:41:5
+	android:name
+		ADDED from AndroidManifest.xml:41:22

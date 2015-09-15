@@ -21,7 +21,8 @@ qaalog.service('share',['device','config',function(device,config){
 
     try {
 
-        window.plugins.socialsharing.share(text, null, null, null);
+       window.plugins.socialsharing.share(text, null, null, null);
+        //window.plugins.socialsharing.share(text, null, image, null);
 
     } catch(e) {
       alert('Sharing temporarily unavailable. \nPlease try again later');

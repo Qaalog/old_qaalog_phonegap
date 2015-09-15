@@ -10,11 +10,11 @@
         ng-show="listStyle === STYLE_LIST && listViewChangeEnabled">Gallery view</li>
   </ul>
   
-  <ul ng-show="menuType === 'main'">
+  <ul>
     <li class="q-icons-non-favorite" ng-fast-touch="showFavorites()">Favorites</li>
-    <li class="q-icons-near-me" ng-fast-touch="showNearMe()" style="display: none">Near Me</li>
-    <li class="q-icons-sort-ascend" ng-class="{'sort-selected': sortSelected === 'A'}" ng-fast-touch="sort('A')" ng-show="isSortable">Sort A-Z</li>
-    <li class="q-icons-sort-descend" ng-class="{'sort-selected': sortSelected === 'D'}" ng-fast-touch="sort('D')" ng-show="isSortable">Sort Z-A</li>
+    <li class="q-icons-near-me" ng-fast-touch="showNearMe()" style="display: none" ng-show="menuType === 'main'">Near Me</li>
+    <li class="q-icons-sort-ascend" ng-class="{'sort-selected': sortSelected === 'A'}" ng-fast-touch="sort('A')" ng-show="isSortable" ng-show="menuType === 'main'">Sort A-Z</li>
+    <li class="q-icons-sort-descend" ng-class="{'sort-selected': sortSelected === 'D'}" ng-fast-touch="sort('D')" ng-show="isSortable" ng-show="menuType === 'main'">Sort Z-A</li>
   </ul>
   
   <ul ng-show="menuType === 'detail' && isShareShow">

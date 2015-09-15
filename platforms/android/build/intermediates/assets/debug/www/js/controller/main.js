@@ -3,7 +3,7 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     
     $scope.isIOS = device.isIOS;
     console.log($scope.isIOS());
-    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
     var imgSize = Math.floor(device.emToPx(16));
     $scope.imgSufix = '&w='+imgSize+'&h='+imgSize;
     
@@ -58,6 +58,8 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     page.hideMenu = function(){
       $scope.menuAvailable = false;
       $scope.tabsAvailable = false;
+      $scope.canShare = false;
+
     };
     page.hideSearch = function(){
       $scope.canSearch = false;
@@ -74,16 +76,28 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     page.setExtendedImage = function(image) {
       $scope.extendedImage = image;
     };
-    
+
+    $scope.onNoResultClick = function() {};
+    page.setOnNoResultClick = function(callback){
+      $scope.onNoResultClick = callback;
+    };
+
     $scope.onBack = function() {
       console.log('GO BACK');
       $scope.resultVisiable = false;
+      if (device.isIOS()) {
+        document.getElementById('barcode-input').blur();
+      }
       return page.goBack();
     };
-    
+
+
     page.goBack = function() {
     //  network.stopAllHttpRequests();
-      network.setAbortBlock(true);
+      console.log('COUNT',network.getActiveRequestsCount());
+      if (network.getActiveRequestsCount() > 0) {
+        network.setAbortBlock(true);
+      }
       window.stop();
       page.hideNoResult();
       var oldPage = page.navigatorPop();
@@ -121,6 +135,7 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     
     page.show = function(pageId,params,isBack) {
       $rootScope.$broadcast('freeMemory');
+      page.setOnNoResultClick(function(){});
       page.showLoader();
       page.hideNoResult();
       params = params || {};
@@ -346,6 +361,7 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     };
 
     $scope.onSearchInputFocus = function() {
+      $scope.startSearching();
       console.log('!!!FOCUS!!!');
     };
 

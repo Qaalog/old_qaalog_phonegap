@@ -14,6 +14,10 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
     abortBlock = value;
   };
 
+  $network.getActiveRequestsCount = function() {
+    return activeRequests.length;
+  };
+
   $network.setUserId = function(id) {
     userId = id;
   };
@@ -66,7 +70,7 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
     }
   };
 
-  var reGetTimeout = 2000;
+  var reGetTimeout = 1000;
   $network.get = function(methodName, params, callback) {
     
     if(!$network.getConnection()) {
@@ -93,20 +97,27 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
               if (typeof timeout === 'function') timeout.cancel();
             })
             .error(function(data, status, headers, config, statusText) { //return incorrect server status (404 instead of 401)
-
+              if (activeRequests.length === 0)  {
+                $network.setAbortBlock(false);
+              }
               if (status != 500 && !abortBlock) {
+                activeRequests.pop();
                 $timeout(function() {
                   if (typeof timeout === 'function') timeout.cancel();
 
-                  if (reGetTimeout > 6000) {
-                    reGetTimeout = 2000;
+                  if (reGetTimeout > 3000) {
+                    reGetTimeout = 1000;
                     callback(false,data);
-                    alert('Server not responding '+ status);
+                    page.hideExtendedHeader();
+                    page.hideMenu();
+                    page.hideSearch();
+                    alert('Server not responding');
+                    page.showNoResult('Please check your Internet connection');
                     page.hideLoader();
                     return false;
                   }
                   console.error('ReGet',reGetTimeout);
-                  reGetTimeout += 2000;
+                  reGetTimeout += 1000;
                   $network.get(methodName, params, callback);
 
                 },reGetTimeout);
@@ -141,7 +152,7 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
               var mapsPath = 'http://maps.google.com/maps?q=loc:' + location.lat + ',' + location.lng;
               callback(mapsPath);
             } catch(e) {
-
+              callback(false);
             }
           })
   };
@@ -151,6 +162,7 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
   $network.getGeoPosition = function(callback) {
     callback = callback || function(){};
     if (!navigator.geolocation) {
+      console.log('no geolocation');
       callback(false);
       return false;
     };
@@ -158,10 +170,11 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
     var onSuccess = function(position) {
       callback(true,position.coords);
     };
-    var onError = function() {
+    var onError = function(error) {
+      console.error(error);
       callback(false);
     };
-    navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    navigator.geolocation.getCurrentPosition(onSuccess, onError,{timeout: 5000, enableHighAccuracy: true});
   };
   
   

@@ -3,7 +3,7 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
 
     device.setIsLoaded(true);
     var onScroll;
-    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
     var imgSize = Math.floor(device.emToPx(9));
     var favElement;
     var favHeight = 0;
@@ -136,8 +136,9 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
           $scope.rows[$scope.def] = temp;
 
         } else {
-          page.showError('catalog', response);
+         // page.showError('catalog', response);
           console.log("ERROR");
+          return false;
         }
 
         if ($scope.rows[$scope.FAVORITE_DEF].items.length > 0) {

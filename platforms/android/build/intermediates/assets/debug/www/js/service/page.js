@@ -36,7 +36,8 @@ qaalog.service('page',['config',function(config){
   $page.setAnimationStyle = function(){};
   $page.setHeaderVisiable = function(){};
   $page.setPageScrollable = function(){};
-  $page.setStatusbarHidden = function() {};
+  $page.setStatusbarHidden = function(){};
+  $page.setOnNoResultClick = function(){};
   $page.currentPage = config.startPage;
   $page.currentParams = {};
   var pageNavigator = [];
@@ -77,6 +78,7 @@ qaalog.service('page',['config',function(config){
   };
   
   $page.navigatorClear = function() {
+    console.log('CLEAR NAVIGATOR');
     pageNavigator = [];
   };
   

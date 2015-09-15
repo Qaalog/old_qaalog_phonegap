@@ -1,4 +1,4 @@
-qaalog.controller('menu',['$scope','page','menu','share','device',function($scope,page,menu,share,device){
+qaalog.controller('menu',['$scope','page','menu','share','device','$timeout',function($scope,page,menu,share,device,$timeout){
     
     var closeMenu;
     $scope.STYLE_LIST = 1;
@@ -55,8 +55,10 @@ qaalog.controller('menu',['$scope','page','menu','share','device',function($scop
     };
     
     $scope.changeCatalog = function() {
-      page.navigatorClear();
       page.show('catalog',{refresh: true});
+      $timeout(function(){
+        page.navigatorPop();
+      });
     };
     
     $scope.loveIt = function() {

@@ -69,6 +69,13 @@ module.exports = [
         "clobbers": [
             "WebIntent"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.dialog/www/dialog.js",
+        "id": "org.apache.cordova.dialog.WebIntent",
+        "clobbers": [
+            "AndroidDialog"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -83,7 +90,8 @@ module.exports.metadata =
     "nl.x-services.plugins.socialsharing": "4.3.19",
     "org.apache.cordova.geolocation": "0.3.12",
     "phonegap-plugin-barcodescanner": "4.0.1",
-    "com.borismus.webintent": "1.0.0"
+    "com.borismus.webintent": "1.0.0",
+    "org.apache.cordova.dialog": "1.0.0"
 }
 // BOTTOM OF METADATA
 });

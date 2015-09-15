@@ -1,7 +1,7 @@
 qaalog.controller('browseProduct', ['$scope','network', 'page', 'config', 'device', 'httpAdapter', '$timeout', 'search', 'menu', 'pager',
   function($scope, network, page, config, device, httpAdapter, $timeout, search, menu, pager) {
     
-    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
     $scope.imgSufix = '&w=768&h=347';
     $scope.productList = [];
     

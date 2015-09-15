@@ -58,7 +58,7 @@
       <header class="header" ng-swipe-header ng-class="{'ios':isIOS()}" ng-hide="headerIsHidden">
         <div class="top-wrap" id="top-wrap">
           <span class="back-btn q-icons-back" ng-fast-touch="onBack()" ng-show="canBack"></span>
-          <span class="search-btn q-icons-search" ng-fast-touch="startSearching()" ng-show="canSearch"></span>
+          <span class="search-btn q-icons-search" ng-show="canSearch"></span>
           <span class="share-btn q-icons-share" ng-fast-touch="share()" ng-show="canShare"></span>
           <span class="menu-btn q-icons-menu" ng-fast-touch="showMenu()" ng-show="menuAvailable"></span>
           <h1 class="title" ng-class="{'expanded':isHeaderExtended && !resultVisiable,'ios':isIOS()}" ng-fast-touch="goToCatalogInfo()">
@@ -67,7 +67,7 @@
             </div>
             {{title}}
           </h1>
-          <ul class="tag-box" ng-show="tabsAvailable && !resultVisiable">
+          <ul class="tag-box" ng-show="tabsAvailable && !resultVisiable && !isSearchPanelVisiable">
             <li ng-class="{'active':activeView[tab.name]}" 
                 ng-style="{'width': 100/tabs.length+'%'}"
                 ng-repeat="tab in tabs"
@@ -81,7 +81,7 @@
       <div ng-hide="isLoaded" style="position: fixed; top: 0; left: 0; bottom:0;right:0;background: #ededed; z-index: 9999"></div>
 
       <div ng-hide="isStatusbarHidden" ng-class="{'statusbar':isIOS()}"></div>
-      <div class="search-wrap" ng-show="isSearchPanelVisiable" ng-class="{'ios':isIOS()}">
+      <div class="search-wrap" ng-class="{'ios':isIOS(), 'hidden': !isSearchPanelVisiable}" ng-show="canSearch">
             <input type="text" 
                    class="search"
                    id="search-input"
@@ -90,7 +90,8 @@
                    ng-focus="onSearchInputFocus()"
                    ng-keypress="onSearch($event)"
                    />
-            <span class="search-close q-icons-close-search"                  
+            <span class="search-close q-icons-close-search"
+                  ng-class="{'hidden': !isSearchPanelVisiable}"
                   ng-fast-touch="stopBlurSearching(searchModel.value);searchModel.value = '';onSearchChange();"></span>
             <div ng-show="tips[0]" class="search-tips">
               <div ng-repeat="tip in tips" 
@@ -104,7 +105,7 @@
       <div class="loader" ng-show="isLoaderVisiable"></div> 
       <div class="content-wrapper" ng-style="scrollType">
         <div class="container" ng-class="{'expanded':isHeaderExtended && !resultVisiable,'ios':isIOS()}">
-          <div class="barcode-wrap" ng-show="noResultVisiable && !isLoaderVisiable">
+          <div class="barcode-wrap" ng-show="noResultVisiable && !isLoaderVisiable" ng-fast-touch="onNoResultClick()">
             <div class="result">
               <h2>{{noResultText}}</h2>
             </div> 

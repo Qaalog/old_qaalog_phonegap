@@ -41,7 +41,7 @@
     </div>
 
     <div class="prod-col">
-      <div class="prod-name">
+      <div class="prod-name" ng-class="{'ios':isIOS()}">
         <div>{{::product.productDescription}}</div>
         <div class="group-name">{{::product.groupName}}</div>
       </div> 

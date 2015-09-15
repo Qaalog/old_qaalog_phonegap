@@ -3,7 +3,7 @@ qaalog.controller('groupDetail',['$scope','page','network','httpAdapter','device
     var getProductCharValue;
     var getProductsByValue;
     
-    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
     var imgHeight = Math.floor(device.emToPx(20));
     $scope.imgSufix = '&w=768&h='+imgHeight;
     

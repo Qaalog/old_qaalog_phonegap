@@ -7,9 +7,9 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     var updateProductDetail;
     var onTabChange;
     
-    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
     var imgHeight = Math.floor(device.emToPx(20));
-    $scope.imgSufix = '&w=768&h=347'//+imgHeight;
+    $scope.imgSufix = '&w=768&h=464'//+imgHeight;
     $scope.imgGallerySufix = '&w=768&h=495';
     
     
@@ -120,9 +120,16 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     };
 
     $scope.showMap = function(address) {
+      address = address.replace(/[^a-zA-Z\s0-9,]/g,'');
+      console.log(address);
+     // var path = 'https://www.google.com.ua/maps/place/' + address;
+     // window.open(path,'_system');
       network.getAddressLink(address, function(path){
         console.log('MAPS PATH', path);
-        window.open(path,'_system');
+        if (!path) {
+          path = 'http://maps.google.com/maps?q=loc:' + address;
+        }
+        window.open(path, '_system');
       });
     };
     

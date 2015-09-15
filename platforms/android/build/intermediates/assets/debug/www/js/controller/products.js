@@ -19,7 +19,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     var imgWidth = Math.round(device.emToPx(38));
     var imgHeight = Math.round(device.emToPx(20));
     var readPCVs;
-    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
     $scope.imgSufix = '&w='+imgWidth+'&h='+imgHeight;
     $scope.elementHeight;
     $scope.listStyle = $scope.STYLE_GRID;
@@ -41,6 +41,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
                    };
 
     page.onShow(settings,function(params) {
+      $scope.loadDownHidden = true;
       console.log('product params',params);
       page.setAnimationStyle(0);
       //if (params.db === 'Qaalog_PapaLeguas') page.setAnimationStyle(2);
@@ -110,7 +111,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
         
         var upperLoaderOnToggle = function(state) {
           console.log('toggle',state);
-          $scope.miniLoaderUpVisiable = state;
+          $scope.loadDownHidden = state;
         };
         
         $scope.pagerOptions = { scope:               $scope
@@ -149,7 +150,8 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
 
           var listViewSize = Math.floor(device.emToPx(14));
           console.log(listViewSize);
-          $scope.imgSufix = (style === $scope.STYLE_GRID) ? '&w=768&h=347' : '&w='+listViewSize+'&h='+listViewSize;
+          $scope.imgPrefix = (style === $scope.STYLE_GRID) ? network.servisePath+'GetCroppedImage?i=' : network.servisePath+'GetResizedImage?i=';
+          $scope.imgSufix = (style === $scope.STYLE_GRID) ? '&w='+imgWidth+'&h='+imgHeight : '&w='+listViewSize+'&h='+listViewSize;
           delete $scope.currentParams.state;
           return true;
         };
@@ -183,6 +185,11 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     
     
     onTabChange = function(view,outerProducts) {
+
+      window.stop();
+      if (network.getActiveRequestsCount() > 0) {
+        network.setAbortBlock(true);
+      }
       if (Object.keys($scope.activeView)[0] !== view) {
         
         if (Object.keys($scope.activeView)[0] === 'list') {
@@ -199,6 +206,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
         page.hideNoResult();
         menu.setIsSortable(false);
         menu.setListViewChangeEnabled(false);
+        $scope.loadDownHidden = true;
         switch (view) {
           case 'list':
             menu.setIsSortable(true);
@@ -229,9 +237,11 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
           case 'browse':
             page.hideExtendedHeader();
             page.pauseSwipeHeader();
+            page.showLoader();
             $scope.currentParams.tab = 'browse';
           //  if (!$scope.currentParams.isBack) {
               getProductTree($scope.currentParams,function(productTree){
+                page.hideLoader();
                 $scope.productTree = productTree;
               });
             //}
@@ -361,11 +371,28 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     
     getNearbyProducts = function(pager,callback) {
       callback = callback || function(){};
-      
+
       network.getGeoPosition(function(result,coords) {
         
-        coords = coords || {};
-        
+        if (!coords) {
+          console.error('NO COORDS');
+          $timeout(function(){
+            if (device.isAndroid()) {
+              try {
+                window.plugins.AndroidDialog.locationDialog();
+              } catch (e) {}
+            }
+            page.hideLoader();
+            page.showNoResult('Unable to find your location, please ensure your location services are enabled');
+            page.setOnNoResultClick(function(){
+              page.hideNoResult();
+              page.showLoader();
+              getNearbyProducts(pager,callback);
+            });
+          });
+          return false;
+        }
+        page.showLoader();
         var data = { catalogDB:   $scope.currentParams.db
                    , mr:    pager.maxRows || 20
                    , sr:    pager.startRow || 1
@@ -429,6 +456,9 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     };
 
     $scope.directOpenProduct = function(item,event) {
+      window.stop();
+      loadingItem.isLoading = false;
+      loadingItem = item;
       item.isLoading = true;
       item = item || {};
       item.db = $scope.currentParams.db;
@@ -585,50 +615,67 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
       });
       
     };
+    $scope.barcodeAutocompleteRequests = 0;
     
     $scope.barcodeSearch = function(value,doAutoSearch) {
-      if (value === null || value === 0) {
-        //page.navigatorPop();
-        $scope.barcode.value = null;
-        $scope.barcodeAutocomplete = [];
-        return false;
-      }
-      value = value + '';
-      if (value.length > 0) {
-        $scope.barcodeAutoCompLoaderVisiable = true;
-        $scope.barcodeAutocompleteVisiable = true;
-        var data = { catalogDB: $scope.currentParams.db
-                   , st:        value
-                   , mr:        3
-                   };
-        network.get('SearchBarcode',data,function(result,response) {
-          $scope.barcodeAutoCompLoaderVisiable = false;
-          $scope.barcodeAutocomplete = httpAdapter.convert(response);
-          if ($scope.barcodeAutocomplete.length === 1) {
-            $scope.currentBarcodeItem = $scope.barcodeAutocomplete[0];
-            if (doAutoSearch) {
-              $timeout(function(){
-                document.getElementById('barcode-input').blur();
-                barcodeAutoSearch();
-              });
+        if (value === null || value === 0) {
+          //page.navigatorPop();
+          $scope.barcode.value = null;
+          $scope.barcodeAutocomplete = [];
+          return false;
+        }
+        value = value + '';
+        if (value.length > 0) {
+          $scope.barcodeAutoCompLoaderVisiable = true;
+          $scope.barcodeAutocompleteVisiable = true;
+          var data = {
+            catalogDB: $scope.currentParams.db
+            , st: value
+            , mr: 3
+          };
+          $scope.barcodeAutocompleteRequests++;
+          if ($scope.barcodeAutocompleteRequests > 1) {
+            window.stop();
+            if (network.getActiveRequestsCount() > 0) {
+              network.setAbortBlock(true);
             }
-          } else {
-            $scope.currentBarcodeItem = false;
           }
-          if ($scope.barcodeAutocomplete.length < 1) {
-            $scope.barcodeAutocomplete.push({groupName: 'No result found'});
-          }
-          console.log('BARCODE',$scope.barcodeAutocomplete);
-        });
-      } else {
-        $scope.barcodeAutocomplete = [];
-      }
+          $timeout(function(){
 
+            //window.stop();
+          },1000);
+          network.get('SearchBarcode', data, function (result, response) {
+            $scope.barcodeAutocompleteRequests--;
+            console.log('barcodeAutocompleteRequests',$scope.barcodeAutocompleteRequests);
+            $scope.barcodeAutoCompLoaderVisiable = false;
+            if (!$scope.barcodeFlag) {
+              $scope.barcodeAutocomplete = httpAdapter.convert(response);
+            }
+            if ($scope.barcodeAutocomplete.length === 1) {
+              $scope.currentBarcodeItem = $scope.barcodeAutocomplete[0];
+              if (doAutoSearch) {
+                $timeout(function () {
+                  document.getElementById('barcode-input').blur();
+                  barcodeAutoSearch();
+                });
+              }
+            } else {
+              $scope.currentBarcodeItem = false;
+            }
+            if ($scope.barcodeAutocomplete.length < 1 && !$scope.barcodeFlag) {
+              $scope.barcodeAutocomplete.push({groupName: 'No result found'});
+            }
+            console.log('BARCODE', $scope.barcodeAutocomplete);
+          });
+        } else {
+          $scope.barcodeAutocomplete = [];
+        }
     };
 
     $scope.barcodePaddingTop = '5em';
     $scope.barcodeInputFocus = function(value) {
      // if (!$scope.isIOS()) {
+        $scope.barcodeFlag = false;
         $scope.inputStarted = true;
         page.setTabsVisiable(false);
         $scope.barcodePaddingTop = '0';
@@ -673,14 +720,22 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     $scope.clearBarcodeAutocomplete = function() {
       $scope.barcodeAutocomplete = [];
     };
-    
+
     $scope.barcodeOnBlur = function() {
       //if ($scope.isIOS()) {
       //  StatusBar.show();
       //}
+
       $scope.inputStarted = false;
       page.setTabsVisiable(true);
       $scope.barcodePaddingTop = '5em';
+      if ($scope.barcodeAutocompleteRequests > 0) {
+        //$scope.clearBarcodeInput();
+        //if (!device.isIOS())
+        //  page.navigatorPop();
+        //return false;
+        //window.stop();
+      }
       $timeout(function(){
         if (!barcodeAutocompleteClearFlag) {
           $scope.clearBarcodeAutocomplete();
@@ -693,6 +748,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
         }
         stopAutosearch = false;
       },300);
+
       if (!device.isIOS())
         page.navigatorPop();
     };
@@ -703,14 +759,16 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
             document.getElementById('barcode-input').blur();
       }
     };
-
+    $scope.barcodeFlag = false;
     $scope.clearBarcodeInput = function() {
       stopAutosearch = true;
       $timeout(function(){
         if (device.isIOS()) {
           document.getElementById('barcode-input').blur();
         }
+        $scope.barcodeFlag = true;
         $scope.barcode.value = '';
+        $scope.barcodeAutoCompLoaderVisiable = false;
         $scope.clearBarcodeAutocomplete();
       });
      // page.navigatorPop();
