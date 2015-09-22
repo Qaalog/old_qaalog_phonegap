@@ -76,6 +76,20 @@ module.exports = [
         "clobbers": [
             "AndroidDialog"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.dialogs/www/notification.js",
+        "id": "org.apache.cordova.dialogs.notification",
+        "merges": [
+            "navigator.notification"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.dialogs/www/android/notification.js",
+        "id": "org.apache.cordova.dialogs.notification_android",
+        "merges": [
+            "navigator.notification"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -91,7 +105,8 @@ module.exports.metadata =
     "org.apache.cordova.geolocation": "0.3.12",
     "phonegap-plugin-barcodescanner": "4.0.1",
     "com.borismus.webintent": "1.0.0",
-    "org.apache.cordova.dialog": "1.0.0"
+    "org.apache.cordova.dialog": "1.0.0",
+    "org.apache.cordova.dialogs": "0.3.0"
 }
 // BOTTOM OF METADATA
 });

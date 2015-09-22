@@ -15,7 +15,7 @@ qaalog.controller('menu',['$scope','page','menu','share','device','$timeout',fun
       page.setTitle(params.title);
       $scope.menuType = params.menuType || 'main';
       page.hideLoader();
-      
+      $scope.catalogInfoAvailable = (menu.getParams().info && menu.getParams().info !== '');
     });
 
   menu.setShareShow = function(value) {
@@ -24,8 +24,11 @@ qaalog.controller('menu',['$scope','page','menu','share','device','$timeout',fun
     
     
     $scope.showCatalogInfo = function(outside) {
-      page.show('catalogInfo',menu.getParams());
-      if (!outside) page.navigatorPop();
+      var params = menu.getParams();
+      if (params.info && params.info !== '') {
+        page.show('catalogInfo', params);
+        if (!outside) page.navigatorPop();
+      }
     };
 
     menu.showCatalogInfo = $scope.showCatalogInfo;

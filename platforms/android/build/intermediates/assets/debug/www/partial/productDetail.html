@@ -1,4 +1,4 @@
-<div class="prod-details-wrap">
+<div class="prod-details-wrap" ng-show="detailsLoaded">
 <!--   <ul class="tag-box">
     <li ng-class="{'active': !detailSwitch}" ng-fast-touch="detailSwitch = false">DETAIL</li>
     <li ng-class="{'active': detailSwitch}" ng-fast-touch="detailSwitch = true">RELATED</li>
@@ -98,7 +98,7 @@
                      , 'straight': $index === galleryIndex 
                      }" >
         <div class="prod-gallery">
-          <img onerror="app.onImgError(this)" ng-src="{{photo.image}}">
+          <img onerror="app.onImgError(this)" onload="app.onImgLoaded(this)" ng-src="{{photo.image}}">
         </div>
       </div>
       

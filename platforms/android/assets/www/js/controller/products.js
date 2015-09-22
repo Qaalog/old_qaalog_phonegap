@@ -1,4 +1,5 @@
-qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', 'httpAdapter', '$timeout', 'search', 'menu', 'pager', '$sce',
+qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
+  'httpAdapter', '$timeout', 'search', 'menu', 'pager', '$sce',
   function($scope, network, page, config, device, httpAdapter, $timeout, search, menu, pager,$sce) {
     
     $scope.STYLE_LIST = 1;
@@ -19,7 +20,8 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     var imgWidth = Math.round(device.emToPx(38));
     var imgHeight = Math.round(device.emToPx(20));
     var readPCVs;
-    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
+    var tree;
+    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
     $scope.imgSufix = '&w='+imgWidth+'&h='+imgHeight;
     $scope.elementHeight;
     $scope.listStyle = $scope.STYLE_GRID;
@@ -47,7 +49,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
       //if (params.db === 'Qaalog_PapaLeguas') page.setAnimationStyle(2);
       //if (params.db === 'Qaalog_Agrovinhos') page.setAnimationStyle(1);
       //if (params.db === 'Qaalog_Farmacias') page.setAnimationStyle(4);
-      
+      tree = new BrowseTree();
       $scope.products = [];
       $scope.isTabBoxHide = false;
       if (params.canBackDisable) {
@@ -181,12 +183,12 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
       $scope.products = [];
       $scope.productTree = [];
       $scope.nearProducts = [];
+      document.getElementById('barcode-input').blur();
     });
     
     
     onTabChange = function(view,outerProducts) {
 
-      window.stop();
       if (network.getActiveRequestsCount() > 0) {
         network.setAbortBlock(true);
       }
@@ -220,7 +222,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
 
               createUser($scope.currentParams,function(userId){
                 network.setUserId(userId);
-              }); 
+              });
 
               if (!outerProducts) {
                 
@@ -269,6 +271,9 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     };
 
     $scope.selectProduct = function(product) {
+      $timeout(function(){
+        network.getConnection();
+      });
       product = product || {};
       console.log('SELECT',product);
 
@@ -379,11 +384,12 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
           $timeout(function(){
             if (device.isAndroid()) {
               try {
-                window.plugins.AndroidDialog.locationDialog();
+                window.plugins.AndroidDialog.locationDialog(app.translate('product_near_location_off_title')
+                  ,app.translate('product_near_location_off_message'));
               } catch (e) {}
             }
             page.hideLoader();
-            page.showNoResult('Unable to find your location, please ensure your location services are enabled');
+            page.showNoResult(app.translate('product_near_no_location_message'));
             page.setOnNoResultClick(function(){
               page.hideNoResult();
               page.showLoader();
@@ -405,7 +411,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
             page.hideNoResult();
             if (response.length < 1) {
               page.hideLoader();
-              page.showNoResult('Nothing found in a vicinity of 5000 meters from you');
+              page.showNoResult(app.translate('product_near_no_results_message').replace('%s',$scope.catalogConfig['proximity_meters'] || 50000));
               return false;
             }
             for (var i in response) {
@@ -429,7 +435,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
       event = event || {stopPropagation: function(){}};
       if (item.lastLevel < 1) {
 
-        window.stop();
+        network.stopAll();
         loadingItem.isLoading = false;
         loadingItem = item;
 
@@ -440,9 +446,16 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
           item.db = $scope.currentParams.db;
           item.treeLevel = treeLevel;
           getProductTree(item,function(productTreeSecondLevel){
+            if (typeof productTreeSecondLevel === 'string') {
+              item.isLoading = false;
+              network.showErrorAlert();
+              return false;
+            }
+            if (productTreeSecondLevel.length === 0) item.lastLevel = 1;
             item.secondLevel = productTreeSecondLevel;
             item.isLoading = false;
             console.log(productTreeSecondLevel);
+            tree.createLevel(event.target,treeLevel,item);
           },event.target);
         } else {
           delete item.secondLevel;
@@ -456,7 +469,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     };
 
     $scope.directOpenProduct = function(item,event) {
-      window.stop();
+      network.stopAll();
       loadingItem.isLoading = false;
       loadingItem = item;
       item.isLoading = true;
@@ -635,7 +648,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
           };
           $scope.barcodeAutocompleteRequests++;
           if ($scope.barcodeAutocompleteRequests > 1) {
-            window.stop();
+            network.stopAll();
             if (network.getActiveRequestsCount() > 0) {
               network.setAbortBlock(true);
             }
@@ -785,18 +798,19 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device', '
     };
 
     $scope.selectProductByBarcode = function(item) {
-      // page.navigatorPop();
-     // barcodeAutocompleteClearFlag = true;
-     
-      //stopAutosearch = true;
+
+
       item = item || {};
+
       item.id = item.productId;
       delete item.productId;
-      $scope.clearBarcodeInput();
+      console.log('BARCODE SELECT',item);
+      if (!item.id) {
+        return false;
+      }
       $scope.selectProduct(item);
-//      if (device.isIOS())
-//          document.getElementById('barcode-input').blur();
-      //document.getElementById('barcode-input').blur();
+      $scope.clearBarcodeInput();
+
     };
     
 }]);

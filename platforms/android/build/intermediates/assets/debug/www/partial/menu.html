@@ -1,7 +1,7 @@
 <div class="menu-wrap" ng-class="{'ios': isIOS()}">
 
-  <ul ng-show="menuType === 'main'">
-    <li class="q-icons-catalog-info" ng-fast-touch="showCatalogInfo()">Catalog Information</li>
+  <ul ng-show="menuType === 'main' && (listViewChangeEnabled || catalogInfoAvailable)">
+    <li class="q-icons-catalog-info" ng-show="catalogInfoAvailable" ng-fast-touch="showCatalogInfo()">Catalog Information</li>
     <li class="q-icons-list-view" 
         ng-fast-touch="toggleViewStyle(STYLE_LIST)" 
         ng-show="listStyle === STYLE_GRID && listViewChangeEnabled">List view</li>

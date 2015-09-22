@@ -7,7 +7,7 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     var updateProductDetail;
     var onTabChange;
     
-    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
     var imgHeight = Math.floor(device.emToPx(20));
     $scope.imgSufix = '&w=768&h=464'//+imgHeight;
     $scope.imgGallerySufix = '&w=768&h=495';
@@ -22,6 +22,8 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
                    };
                    
     page.onShow(settings,function(params) {
+      $scope.detailsLoaded = false;
+      page.showLoader();
       page.setTabs([{name: 'detail', value: 'details'},{name: 'related', value: 'related'}]);
       page.onTabChange = onTabChange;
       $scope.currentParams = params;
@@ -134,8 +136,16 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     };
     
     updateProductDetail = function(params) {
+      if (!network.getConnection()){
+        return false;
+      }
+
       getProductDetails(params,function(productDetails) {
         $scope.productDetails = productDetails;
+        if (!network.getConnection()){
+          return false;
+        }
+        $scope.detailsLoaded = true;
         var list = productDetails.list;
         page.setTitle(productDetails.description.productName);
         $scope.productDetailsList = {};
@@ -237,7 +247,6 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
         if (result) {
           page.hideNoResult();
           if (response.length < 1) {
-            page.hideLoader();
             page.showNoResult();
             return false;
           }

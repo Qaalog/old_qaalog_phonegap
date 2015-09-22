@@ -77,6 +77,8 @@ qaalog.service('httpAdapter',[function(){
               , 'pr1':    'price1'
               , 'pr2':    'price2'
               , 'pr3':    'price3'
+
+             // , 'info':   'info'
               };
     
 }]);

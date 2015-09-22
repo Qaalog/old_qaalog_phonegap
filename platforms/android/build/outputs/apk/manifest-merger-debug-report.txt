@@ -2,9 +2,9 @@
 manifest
 ADDED from AndroidManifest.xml:2:1
 	package
-		ADDED from AndroidManifest.xml:2:101
+		ADDED from AndroidManifest.xml:2:102
 	android:versionName
-		ADDED from AndroidManifest.xml:2:72
+		ADDED from AndroidManifest.xml:2:74
 	android:hardwareAccelerated
 		ADDED from AndroidManifest.xml:2:11
 	android:versionCode
@@ -12,7 +12,7 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 		INJECTED from AndroidManifest.xml:0:0
 	xmlns:android
-		ADDED from AndroidManifest.xml:2:126
+		ADDED from AndroidManifest.xml:2:127
 supports-screens
 ADDED from AndroidManifest.xml:3:5
 	android:largeScreens
@@ -58,7 +58,7 @@ ADDED from AndroidManifest.xml:8:9
 	android:launchMode
 		ADDED from AndroidManifest.xml:8:135
 	android:windowSoftInputMode
-		ADDED from AndroidManifest.xml:8:285
+		ADDED from AndroidManifest.xml:8:290
 	android:configChanges
 		ADDED from AndroidManifest.xml:8:19
 	android:theme

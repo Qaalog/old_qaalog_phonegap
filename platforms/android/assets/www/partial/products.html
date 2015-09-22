@@ -55,39 +55,14 @@
 </div>
 
 <div ng-show="activeView.browse" class="product-browse" ng-class="{'tab-box-hide': isTabBoxHide}">
-  <div class="items-browse" 
-       ng-repeat="item in productTree" 
-       ng-fast-touch="openCategory(item,2,$event)">
-    <div class="item-browse" ng-class="{'opened':item.secondLevel[0],'last':item.lastLevel > 0}">{{::item.listName}}
-        <span class="q-icons-category-browse" ng-fast-touch="directOpenProduct(item,$event)" ng-hide="item.isLoading"></span>
-        <span ng-show="item.isLoading"><img src="img/qaalog_loader_32x.gif" class="loader-small-blue" /></span>
+  <div class="items-browse"
+       ng-repeat="item1 in productTree"
+       ng-fast-touch="openCategory(item1,2,$event)">
+    <div class="item-browse" ng-class="{'opened':item1.secondLevel[0],'last':item1.lastLevel > 0}">{{::item1.listName}}
+      <span class="q-icons-category-browse" ng-fast-touch="directOpenProduct(item1,$event)" ng-hide="item1.isLoading"></span>
+      <span ng-show="item1.isLoading"><img src="img/qaalog_loader_32x.gif" class="loader-small-blue" /></span>
     </div>
-    
-    <div class="subitems-browse" 
-         ng-repeat="itemSecondLevel in item.secondLevel" 
-         ng-show="item.secondLevel[0]" 
-         ng-fast-touch="openCategory(itemSecondLevel,3,$event)">
 
-      <div class="subitem-browse" 
-           ng-class="{'opened':itemSecondLevel.secondLevel[0],'last':itemSecondLevel.lastLevel > 0}">{{::itemSecondLevel.listName}}
-            <span class="q-icons-category-browse" ng-fast-touch="directOpenProduct(itemSecondLevel,$event)" ng-hide="itemSecondLevel.isLoading"></span>
-            <span ng-show="itemSecondLevel.isLoading"><img src="img/qaalog_loader_32x.gif" class="loader-small-blue" /></span>
-      </div>
-      
-        <div class="subitems-browse" 
-             ng-repeat="itemThirdLevel in itemSecondLevel.secondLevel" 
-             ng-show="itemSecondLevel.secondLevel[0]" 
-             ng-fast-touch="openCategory(itemThirdLevel,4,$event)">
-        <div class="subitem-browse sub2"
-             ng-class="{'last':itemThirdLevel.lastLevel > 0}">{{::itemThirdLevel.listName}}
-
-            <span class="q-icons-category-browse" ng-fast-touch="directOpenProduct(itemThirdLevel,$event)" ng-hide="itemThirdLevel.isLoading"></span>
-            <span ng-show="itemThirdLevel.isLoading"><img src="img/qaalog_loader_32x.gif" class="loader-small-blue" /></span>
-        </div>
-      </div>
-      
-    </div>
-    
   </div>
 </div>
 
@@ -96,7 +71,7 @@
     <div class="prod-image">
       <img onerror="app.onImgError(this)" ng-src="{{::imgPrefix + item.productImage + imgSufix}}">
     </div>
-    <h2>{{::item.productName}}</h2>
+    <h2>{{::item.groupName}}</h2>
     <ul class="prod-desc">
       <li>
 

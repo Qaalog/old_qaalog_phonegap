@@ -112,6 +112,12 @@ qaalog.controller('browseProduct', ['$scope','network', 'page', 'config', 'devic
                  };
       network.get('GetTreeLevelChildrenProducts', data, function(result, response){
         if(result) {
+          if (response.length === 1) {
+            $scope.showProductDetail(response[0]);
+            $timeout(function(){
+              page.navigatorPop();
+            },500);
+          }
           callback(httpAdapter.convert(response));
           if (response.length < (pagerOptions.maxRows || 75) ) {
             $scope.loadDownHidden = true;

@@ -47,6 +47,10 @@
                         {
                             "xml": "<feature name=\"AndroidDialog\"><param name=\"android-package\" value=\"org.apache.cordova.dialog.AndroidDialog\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -626,6 +630,9 @@
         },
         "org.apache.cordova.dialog": {
             "PACKAGE_NAME": "com.qaalog.dev1"
+        },
+        "org.apache.cordova.dialogs": {
+            "PACKAGE_NAME": "com.qaalog.dev"
         }
     },
     "dependent_plugins": {}

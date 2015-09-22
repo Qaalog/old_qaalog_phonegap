@@ -8,7 +8,7 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
   var abortBlock = false;
   var cancelerList = [];
 
-  var activeRequests = [];
+  var activeRequests = {};
 
   $network.setAbortBlock = function(value) {
     abortBlock = value;
@@ -34,57 +34,71 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
     return catalogDB;
   };
 
-  $network.stopAllHttpRequests = function() {
-    //for (var i in cancelerList) {
-    //  cancelerList[i].resolve();
-    //}
-    //cancelerList = [];
-  };
-
-  $network.getConnection = function() {
-    return true;
-    var res = true;
-    if(navigator == undefined) {
-      res = false;
-    } else {
-      var networkState = navigator.connection.type;
-      var states = {};
-      states[Connection.UNKNOWN]  = 'unknown';
-      states[Connection.ETHERNET] = 'ethernet';
-      states[Connection.WIFI]     = 'wifi';
-      states[Connection.CELL_2G]  = 'Cell 2G connection';
-      states[Connection.CELL_3G]  = '3g';
-      states[Connection.CELL_4G]  = '4g';
-      states['cellular']          = 'cellular';
-  //    states[Connection.NONE]     = 'No network connection';
-
-      res = states[networkState] || false;
+  $network.stopAll = function() {
+    for (var key in activeRequests) {
+      var request = activeRequests[key];
+      request.canceled = true;
+      request.reGetTimeout = 1000;
     }
-    return res;
+
+    window.stop();
   };
+
+
+  var dialogFlag = false;
+  $network.getConnection = function() {
+    if (navigator.connection) {
+      console.log('CONNECTION TYPE: ', navigator.connection.type);
+      if (navigator.connection.type === 'none' && !dialogFlag) {
+        dialogFlag = true;
+        page.show(config.startPage, {}, false, true);
+        $timeout(function () {
+          page.navigatorClear();
+          if (navigator.notification) {
+            navigator.notification.alert(app.translate('network_generic_no_network_message'), function () {
+              dialogFlag = false;
+            }, app.translate('network_generic_no_network_title'), app.translate('network_generic_error_button_ok'));
+          } else {
+            alert(app.translate('network_generic_no_network_message'));
+          }
+        });
+        return false;
+      }
+    }
+    return true;
+  };
+
+
+  document.addEventListener("online", function() {
+    $network.getConnection();
+    console.log('ONLINE');
+  });
+  document.addEventListener("offline", function() {
+    $network.getConnection();
+    console.log('OFFLINE');
+  });
 
   var checkAborted = function() {
-    activeRequests.pop();
+    //activeRequests.pop();
     if (activeRequests.length === 0)  {
       $network.setAbortBlock(false);
     }
   };
 
-  var reGetTimeout = 1000;
-  $network.get = function(methodName, params, callback) {
+  $network.get = function(methodName, params, callback,reGet) {
     
-    if(!$network.getConnection()) {
-      callback(false,{'errorCode':'not_connected', 'errorText':'Connection error. Please check your internet connection and try again.'});
-      alert('Please check your internet connection');
-      return false;
-    }
+    //if(!$network.getConnection()) {
+    //  return false;
+    //}
     
     var path = $network.servisePath+methodName+'?'+$network.serialize(params);
     //console.log('#<<<['+methodName+']',path);
     //var canceler = $q.defer();
     var timeout;
     //cancelerList.push(canceler);
-    activeRequests.push(true);
+    if (!reGet) {
+      activeRequests[path] = {method: 'get', reGetTimeout: 1000};
+    }
     $http({ 'method': 'get'
           , 'url': path
 //        , 'data':  params
@@ -93,42 +107,55 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
             .success(function(result, status, headers) {
               //console.log('#>>>['+methodName+']',result);
               callback(true, result);
-              activeRequests.pop();
+              delete activeRequests[path];
               if (typeof timeout === 'function') timeout.cancel();
             })
-            .error(function(data, status, headers, config, statusText) { //return incorrect server status (404 instead of 401)
-              if (activeRequests.length === 0)  {
-                $network.setAbortBlock(false);
-              }
-              if (status != 500 && !abortBlock) {
-                activeRequests.pop();
+            .error(function(data, status, headers, config, statusText) {
+
+              if (status != 500) {
                 $timeout(function() {
                   if (typeof timeout === 'function') timeout.cancel();
 
-                  if (reGetTimeout > 3000) {
-                    reGetTimeout = 1000;
-                    callback(false,data);
+                  if (activeRequests[path].reGetTimeout > 3000) {
+                    activeRequests[path].reGetTimeout = 1000;
+
                     page.hideExtendedHeader();
                     page.hideMenu();
                     page.hideSearch();
-                    alert('Server not responding');
-                    page.showNoResult('Please check your Internet connection');
+                    if (navigator.notification) {
+                      navigator.notification.alert(app.translate('network_generic_timeout_message'),
+                        function(){},app.translate('network_generic_timeout_title'),app.translate('network_generic_error_button_ok'));
+                    } else {
+                      alert(app.translate('network_generic_timeout_message'));
+                    }
+                    page.showNoResult(app.translate('network_generic_timeout_message'));
                     page.hideLoader();
+                    delete activeRequests[path];
                     return false;
                   }
-                  console.error('ReGet',reGetTimeout);
-                  reGetTimeout += 1000;
-                  $network.get(methodName, params, callback);
+                  console.error('ReGet',activeRequests[path].reGetTimeout);
+                  activeRequests[path].reGetTimeout += 1000;
+                  console.log(path);
+                  if (!$network.getConnection()) {
+                    if (typeof timeout === 'function') timeout.cancel();
+                    activeRequests[path].reGetTimeout = 1000;
+                    return false;
+                  }
+                  if (!activeRequests[path].canceled) {
+                    $network.get(methodName, params, callback,true);
+                  }
 
-                },reGetTimeout);
+                },activeRequests[path].reGetTimeout);
+                callback(false,data);
                 return false;
               }
               //alert('Please check your internet connection');
               //page.goBack();
+              delete activeRequests[path];
               checkAborted();
               page.hideLoader();
               callback(false,data);
-
+              $network.showErrorAlert();
             });
     timeout = $timeout(function(){
      // canceler.resolve();
@@ -175,6 +202,16 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
       callback(false);
     };
     navigator.geolocation.getCurrentPosition(onSuccess, onError,{timeout: 5000, enableHighAccuracy: true});
+  };
+
+  $network.showErrorAlert = function() {
+    if (navigator.notification) {
+      navigator.notification.alert(app.translate('network_generic_app_error_message'),
+        function(){},app.translate('network_generic_error_title'),app.translate('network_generic_error_button_ok'));
+    } else {
+      alert(app.translate('network_generic_app_error_message'));
+    }
+    page.goBack();
   };
   
   

@@ -1,4 +1,4 @@
-qaalog.controller('catalogInfo',['$scope','page','network','httpAdapter',function($scope,page,network,httpAdapter){
+qaalog.controller('catalogInfo',['$scope','page','$sce',function($scope,page,$sce){
     
     
     var settings = { name:   'catalogInfo'
@@ -7,11 +7,17 @@ qaalog.controller('catalogInfo',['$scope','page','network','httpAdapter',functio
                    , menu:   true
                    };
 
+    $scope.getInfo = function(){};
     page.onShow(settings,function(params) {
       $scope.currentParams = params;
       console.log($scope.currentParams);
+      $scope.getInfo = function(){
+        return $sce.trustAsHtml($scope.currentParams.info);
+      };
       page.hideLoader();
     });
+
+
     
 }]);
 

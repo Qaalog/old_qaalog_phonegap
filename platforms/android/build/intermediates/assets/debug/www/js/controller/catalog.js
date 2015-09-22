@@ -16,6 +16,8 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
     $scope.rows = {};
     $scope.def = 'Generic';
     $scope.FAVORITE_DEF = 'Favorites';
+   // $scope.def = app.translate('catalog_selection_default_tag');
+   // $scope.FAVORITE_DEF = app.translate('catalog_selection_favorite_tag');
     $scope.self = { 'name':  'catalog'
                   , 'title': 'Qaalog'
                   , 'back':  false
@@ -119,6 +121,7 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
                         , description:  item.description
                         , db:           item.db
                         , favorite:     item.favorite
+                        , info:         item.info
                         };
             var groupInfo = item.tag[0] || {};
             var group = groupInfo.name || $scope.def;
@@ -137,6 +140,8 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
 
         } else {
          // page.showError('catalog', response);
+          $scope.noResultVisiable = true;
+          page.setCatalogTitleVisiable(false);
           console.log("ERROR");
           return false;
         }
@@ -154,42 +159,52 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
 
     });
 
+    var like = function(catalog) {
+      catalog.favorite++;
+      $scope.rows[$scope.FAVORITE_DEF]['items'].push(catalog);
+
+      if ($scope.rows[$scope.FAVORITE_DEF]['items'].length > 1) {
+        if ($scope.rows[$scope.FAVORITE_DEF].hidden) {
+          favHeight = favElement.getBoundingClientRect().height;
+          $scope.rows[$scope.FAVORITE_DEF].hidden = false;
+          // app.wrapper.scrollTop = app.wrapper.scrollTop + (favHeight - 110);
+        }
+      } else {
+        app.wrapper.scrollTop = 0;
+        $scope.rows[$scope.FAVORITE_DEF].hidden = true;
+      }
+    };
+
+    var unlike = function(catalog) {
+      catalog.favorite--;
+      for (var i in $scope.rows[$scope.FAVORITE_DEF]['items']) {
+        var item = $scope.rows[$scope.FAVORITE_DEF]['items'][i];
+        if (catalog.db === item.db) {
+          $scope.rows[$scope.FAVORITE_DEF]['items'].splice(i,1);
+          break;
+        }
+      }
+
+      if ($scope.rows[$scope.FAVORITE_DEF]['items'].length < 1) {
+        $scope.rows[$scope.FAVORITE_DEF]['hidden'] = false;
+        categoryTitleHeight = categoryTitleHeight || document.getElementsByClassName('category-title')[0].getBoundingClientRect().height;
+        app.wrapper.scrollTop = app.wrapper.scrollTop + categoryTitleHeight;
+      }
+    };
+
     $scope.addToFavorites = function(catalog,event) {
       favElement = document.getElementsByClassName('group')[0];
       event.stopPropagation();
       categoryHeight = categoryHeight || document.getElementsByClassName('category')[0].getBoundingClientRect().height;
 
       if (catalog.favorite < 1) {
-        catalog.favorite++;
-        $scope.rows[$scope.FAVORITE_DEF]['items'].push(catalog);
-
-        if ($scope.rows[$scope.FAVORITE_DEF]['items'].length > 1) {
-          if ($scope.rows[$scope.FAVORITE_DEF].hidden) {
-            favHeight = favElement.getBoundingClientRect().height;
-            $scope.rows[$scope.FAVORITE_DEF].hidden = false;
-           // app.wrapper.scrollTop = app.wrapper.scrollTop + (favHeight - 110);
-          }
-        } else {
-          app.wrapper.scrollTop = 0;
-          $scope.rows[$scope.FAVORITE_DEF].hidden = true;
-        }
-
+        like(catalog);
+        var action = 'like';
       } else {
-        catalog.favorite--;
-        for (var i in $scope.rows[$scope.FAVORITE_DEF]['items']) {
-          var item = $scope.rows[$scope.FAVORITE_DEF]['items'][i];
-          if (catalog.db === item.db) {
-            $scope.rows[$scope.FAVORITE_DEF]['items'].splice(i,1);
-            break;
-          }
-        }
-
-        if ($scope.rows[$scope.FAVORITE_DEF]['items'].length < 1) {
-           $scope.rows[$scope.FAVORITE_DEF]['hidden'] = false;
-           categoryTitleHeight = categoryTitleHeight || document.getElementsByClassName('category-title')[0].getBoundingClientRect().height;
-           app.wrapper.scrollTop = app.wrapper.scrollTop + categoryTitleHeight;
-        }
+        unlike(catalog);
+        var action = 'unlike';
       }
+
       $rootScope.$broadcast('recalculateListHeight');
       var data = { catalogDB: catalog.db
                  , deviceID: device.getUUID() || 'asdqwe'
@@ -202,8 +217,10 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
            $scope.getCatalogs();
          }
         } else {
-          $scope.rows = {};
-          $scope.getCatalogs();
+          if (action === 'like') unlike(catalog);
+          if (action === 'unlike') like(catalog);
+          //$scope.rows = {};
+          //$scope.getCatalogs();
         }
       });
     };

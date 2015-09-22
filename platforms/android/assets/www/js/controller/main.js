@@ -3,9 +3,10 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     
     $scope.isIOS = device.isIOS;
     console.log($scope.isIOS());
-    $scope.imgPrefix = network.servisePath+'GetCroppedImage?i=';
+    $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
     var imgSize = Math.floor(device.emToPx(16));
     $scope.imgSufix = '&w='+imgSize+'&h='+imgSize;
+    $scope.app = app;
     
     $scope.activePage = {};
     //$scope.activePage[config.startPage] = true;
@@ -20,6 +21,16 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     $scope.catalogTitleVisiable = true;
     $scope.noResultText = 'No results found';
     $scope.resultsTitle = 'Results for ';
+    $scope.selectionTitle = 'Select catalog to use';
+
+   // $scope.selectionTitle = app.translate('catalog_selection_subtitle');
+    if (navigator.connection) {
+      $scope.connection = navigator.connection;
+      $scope.$watch('connection.type',function(value) {
+        console.log('CONNECTION CHANGE', value);
+        network.getConnection();
+      });
+    }
 
 
     page.setHeaderVisiable = function(value){
@@ -84,10 +95,14 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
 
     $scope.onBack = function() {
       console.log('GO BACK');
+      if (!network.getConnection()){
+        return false;
+      }
       $scope.resultVisiable = false;
       if (device.isIOS()) {
         document.getElementById('barcode-input').blur();
       }
+      
       return page.goBack();
     };
 
@@ -98,7 +113,7 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
       if (network.getActiveRequestsCount() > 0) {
         network.setAbortBlock(true);
       }
-      window.stop();
+      network.stopAll();
       page.hideNoResult();
       var oldPage = page.navigatorPop();
       console.log('OLD PAGE',oldPage);
@@ -110,8 +125,11 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
         }
         
         $scope.resultVisiable = oldPage.params.resultVisiable;
-        
-        page.show(oldPage.name,oldPage.params,true);
+        var delay = 0;
+        if (device.isIOS()) delay = 100;
+        $timeout(function() {
+          page.show(oldPage.name,oldPage.params,true);
+        },delay);
         return true;
       } else {
         return false;
@@ -133,7 +151,13 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
       }
     }, false);
     
-    page.show = function(pageId,params,isBack) {
+    page.show = function(pageId,params,isBack, force) {
+      if (!force) {
+        if (!network.getConnection()){
+          return false;
+        }
+      }
+      //document.getElementById('barcode-input').blur();
       $rootScope.$broadcast('freeMemory');
       page.setOnNoResultClick(function(){});
       page.showLoader();
@@ -238,6 +262,9 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     };
     
     $scope.changeView = function(view){
+      if (!network.getConnection()){
+        return false;
+      }
       $scope.activeView = {};
       $scope.activeView[view] = true;
       page.onTabChange(view);
@@ -245,6 +272,9 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     
     var startSearchingFlag = false;
     $scope.startSearching = function() {
+      if (!network.getConnection()){
+        return false;
+      }
       $scope.searchModel = {};
       $scope.isSearchPanelVisiable = true;
       page.hideExtendedHeader();
@@ -293,6 +323,9 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     };
     
     $scope.completeSearchValue = function(tip) {
+      if (!network.getConnection()){
+        return false;
+      }
       $scope.searchModel = $scope.searchModel || {};
       $scope.searchModel.value = tip;
       $scope.tips = [];
@@ -301,6 +334,9 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     };
     
     $scope.onSearch = function(event) {
+      if (!network.getConnection()){
+        return false;
+      }
       if (!event || event.keyCode === 13) {
         page.showLoader();
         page.navigatorPop();
@@ -316,12 +352,18 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     };
     
     $scope.showMenu = function() {
+      var delay = 0;
+      if (device.isIOS()) deley = 100;
       var pageName = Object.keys($scope.activePage)[0];
       
       var data = { menuType: (pageName === 'productDetail') ? 'detail' : 'main'
                  , title: $scope.title
                  };
-      page.show('menu',data);
+     
+      $timeout(function(){
+        page.show('menu',data);     
+      },delay)
+      
     };
     
     $scope.share = function() {
