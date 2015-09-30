@@ -2,7 +2,9 @@ qaalog.controller('groups',['$scope','page','network','httpAdapter','device',fun
     
     var getProductHeaderChar;
     $scope.isIOS = device.isIOS;
-    
+    $scope.groupByTitle = app.translate('groups_group_by_title','Group by');
+
+
     var settings = { name:   'groups'
                    , title:  'groups'
                    , back:   true

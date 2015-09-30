@@ -55,11 +55,11 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
         $timeout(function () {
           page.navigatorClear();
           if (navigator.notification) {
-            navigator.notification.alert(app.translate('network_generic_no_network_message'), function () {
+            navigator.notification.alert(app.translate('network_generic_no_network_message', 'Please check your network settings.'), function () {
               dialogFlag = false;
-            }, app.translate('network_generic_no_network_title'), app.translate('network_generic_error_button_ok'));
+            }, app.translate('network_generic_no_network_title','Network unavailable'), app.translate('network_generic_error_button_ok','OK'));
           } else {
-            alert(app.translate('network_generic_no_network_message'));
+            alert(app.translate('network_generic_no_network_message','Please check your network settings.'));
           }
         });
         return false;
@@ -123,12 +123,13 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
                     page.hideMenu();
                     page.hideSearch();
                     if (navigator.notification) {
-                      navigator.notification.alert(app.translate('network_generic_timeout_message'),
-                        function(){},app.translate('network_generic_timeout_title'),app.translate('network_generic_error_button_ok'));
+                      navigator.notification.alert(app.translate('network_generic_timeout_message','Check you internet connection and try again.'),
+                        function(){},app.translate('network_generic_timeout_title','Network timeout'),
+                        app.translate('network_generic_error_button_ok','OK'));
                     } else {
-                      alert(app.translate('network_generic_timeout_message'));
+                      alert(app.translate('network_generic_timeout_message','Check you internet connection and try again.'));
                     }
-                    page.showNoResult(app.translate('network_generic_timeout_message'));
+                    page.showNoResult(app.translate('network_generic_timeout_message','Check you internet connection and try again.'));
                     page.hideLoader();
                     delete activeRequests[path];
                     return false;
@@ -206,10 +207,11 @@ qaalog.service('network',['$http', 'page', 'config','$q','$timeout', function($h
 
   $network.showErrorAlert = function() {
     if (navigator.notification) {
-      navigator.notification.alert(app.translate('network_generic_app_error_message'),
-        function(){},app.translate('network_generic_error_title'),app.translate('network_generic_error_button_ok'));
+      navigator.notification.alert(app.translate('network_generic_app_error_message','Something went wrong while fetching data.'),
+        function(){},app.translate('network_generic_error_title','Network error'),
+        app.translate('network_generic_error_button_ok','OK'));
     } else {
-      alert(app.translate('network_generic_app_error_message'));
+      alert(app.translate('network_generic_app_error_message','Something went wrong while fetching data.'));
     }
     page.goBack();
   };

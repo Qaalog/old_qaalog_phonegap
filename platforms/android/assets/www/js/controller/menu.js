@@ -6,6 +6,16 @@ qaalog.controller('menu',['$scope','page','menu','share','device','$timeout',fun
     $scope.isIOS = device.isIOS;
     $scope.listStyle = $scope.STYLE_GRID;
     $scope.sortSelected = 'A';
+
+    $scope.translate = { sortAZ:        app.translate('menu_sort_asc_title','Sort A-Z')
+                       , sortZA:        app.translate('menu_sort_desc_title','Sort Z-A')
+                       , favorites:     app.translate('menu_favorites','Favorites')
+                       , listView:      app.translate('menu_list_view','List view')
+                       , galleryView:   app.translate('menu_gallery_view','Gallery view')
+                       , catalogInfo:   app.translate('menu_catalog_info','Catalog information')
+                       , changeCatalog: app.translate('menu_change_catalog','Change catalog')
+                       , share:         app.translate('menu_share','Share')
+                       };
     
     var settings = { name: 'menu'
                    , title: 'menu'
@@ -41,14 +51,10 @@ qaalog.controller('menu',['$scope','page','menu','share','device','$timeout',fun
     
     $scope.showFavorites = function() {
       var data = { params: menu.getParams()
-                 , item: {listName: 'Favorites'}
+                 , item: {listName: app.translate('menu_favorites')}
                  };
       page.show('browseProduct',data);
       page.navigatorPop();
-    };
-    
-    $scope.showNearMe = function() {
-      
     };
     
     $scope.sort = function(type) {
@@ -62,10 +68,6 @@ qaalog.controller('menu',['$scope','page','menu','share','device','$timeout',fun
       $timeout(function(){
         page.navigatorPop();
       });
-    };
-    
-    $scope.loveIt = function() {
-      
     };
 
     $scope.share = function() {

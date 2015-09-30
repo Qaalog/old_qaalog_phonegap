@@ -94,13 +94,13 @@
 
 <div ng-show="activeView.barcode" class="product-near" ng-class="{'tab-box-hide': isTabBoxHide}" ng-style="{'padding-top': barcodePaddingTop}">
     <div class="barcode-wrap">
-        <h2 ng-hide="inputStarted">Press scan button</h2>
+        <h2 ng-hide="inputStarted">{{scanButtonTitle}}</h2>
         <button ng-hide="inputStarted" ng-fast-touch="showBarScanner()">
             <i class="q-icons-barcode"></i>
-            <span>scan</span>
+            <span>{{scanButtonLabel}}</span>
         </button>
         <div class="input-wrap">
-            <h2 ng-hide="inputStarted">or type barcode number</h2>
+            <h2 ng-hide="inputStarted">{{inputTitle}}</h2>
             <input type="number"
                    id="barcode-input"
                    ng-model="barcode.value"

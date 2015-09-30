@@ -1,6 +1,13 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
+        "file": "plugins/com.borismus.webintent/www/webintent.js",
+        "id": "com.borismus.webintent.WebIntent",
+        "clobbers": [
+            "WebIntent"
+        ]
+    },
+    {
         "file": "plugins/cordova-plugin-device/www/device.js",
         "id": "cordova-plugin-device.device",
         "clobbers": [
@@ -31,6 +38,20 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
+        "id": "cordova-plugin-screen-orientation.screenorientation",
+        "clobbers": [
+            "cordova.plugins.screenorientation"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.ios.js",
+        "id": "cordova-plugin-screen-orientation.screenorientation.ios",
+        "merges": [
+            "cordova.plugins.screenorientation"
+        ]
+    },
+    {
         "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
         "id": "cordova-plugin-splashscreen.SplashScreen",
         "clobbers": [
@@ -42,13 +63,6 @@ module.exports = [
         "id": "cordova-plugin-statusbar.statusbar",
         "clobbers": [
             "window.StatusBar"
-        ]
-    },
-    {
-        "file": "plugins/com.borismus.webintent/www/webintent.js",
-        "id": "com.borismus.webintent.WebIntent",
-        "clobbers": [
-            "WebIntent"
         ]
     },
     {
@@ -111,13 +125,14 @@ module.exports = [
 module.exports.metadata = 
 // TOP OF METADATA
 {
+    "com.borismus.webintent": "1.0.0",
     "cordova-plugin-device": "1.0.1",
     "cordova-plugin-inappbrowser": "1.0.1",
     "cordova-plugin-network-information": "1.0.1",
+    "cordova-plugin-screen-orientation": "1.4.0",
     "cordova-plugin-splashscreen": "2.1.0",
     "cordova-plugin-statusbar": "1.0.1",
     "cordova-plugin-whitelist": "1.0.0",
-    "com.borismus.webintent": "1.0.0",
     "nl.x-services.plugins.socialsharing": "4.3.19",
     "org.apache.cordova.dialog": "1.0.0",
     "org.apache.cordova.dialogs": "0.3.0",

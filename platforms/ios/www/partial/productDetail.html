@@ -4,7 +4,7 @@
     <li ng-class="{'active': detailSwitch}" ng-fast-touch="detailSwitch = true">RELATED</li>
   </ul> -->
 
-  <div ng-hide="detailSwitch" class="prod-details">
+  <div ng-hide="detailSwitch" class="prod-details single-item">
 
     <div class="prod-image">
       <ol class="control-nav" ng-hide="productDetails.gallery.length < 2">
@@ -82,28 +82,24 @@
       </li>
     </ul>
 
-    <div class="gallery-wrap"
+    <div class="gallery-wrap screen-gallery"
          ng-swipe
-         ng-on-up="navigateGallery($direction)"
-         ng-on-down="navigateGallery($direction)"
-         ng-on-left="swipeGalleryExit()"
+         ng-on-left="navigateGallery($direction)"
+         ng-on-right="navigateGallery($direction)"
+         ng-on-up="swipeGalleryExit()"
          ng-fast-touch="showCloseBtn()"
          ng-show="galleryStarted">
 
-
-
-      <div class="gallery-middle-wrap" ng-repeat="photo in productDetails.gallery"
-           ng-class="{ 'to-left':$index < galleryIndex
-                     , 'to-right':$index > galleryIndex
-                     , 'straight': $index === galleryIndex 
-                     }" >
-        <div class="prod-gallery">
-          <img onerror="app.onImgError(this)" ng-src="{{photo.image}}">
-        </div>
+      <div class="prod-gallery-screen" ng-repeat="photo in productDetails.gallery"
+         ng-class="{ 'to-left':$index < galleryIndex
+                   , 'to-right':$index > galleryIndex
+                   , 'straight': $index === galleryIndex 
+                   , 'landscape': isLandscape
+                   }" >
+        <img onerror="app.onImgError(this)" onload="app.onImgLoaded(this)" ng-src="{{photo.image}}">
       </div>
-      
 
-      <ol class="control-nav" ng-hide="productDetails.gallery.length < 2">
+      <ol class="control-nav-screen" ng-hide="productDetails.gallery.length < 2" ng-class="{'landscape': isLandscape}">
         <li class="q-icons-circle" ng-class="{'active':$index === galleryIndex}"
             ng-repeat="Image in productDetails.gallery"
             ng-fast-touch="navigateGallery(null,$index)"></li>
@@ -116,7 +112,7 @@
   <div ng-show="detailSwitch" class="related">
     <div class="item-related" ng-repeat="item in crossSellingInfo.relatedList" ng-fast-touch="showProductDetails(item)">
       <div class="prod-image" ng-class="{gallery:galleryStarted}">
-        <img onerror="app.onImgError(this)" ng-src="{{::imgPrefix + item.productImage + imgSufix}}">
+        <img onerror="app.onImgError(this)" ng-src="{{::imgPrefix + item.productImage + imgRelatedSufix}}">
       </div>
       <h2>{{::item.productName}}</h2>
       <div class="catalog-name">

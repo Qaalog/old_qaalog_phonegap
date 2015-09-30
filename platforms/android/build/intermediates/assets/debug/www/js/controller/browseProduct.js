@@ -44,7 +44,12 @@ qaalog.controller('browseProduct', ['$scope','network', 'page', 'config', 'devic
      
      $scope.unwatch = $scope.$watch('productList',function(){
           if ($scope.productList.length === 0) {
-             page.showNoResult();
+            if (!$scope.currentData.ajaxMethod || $scope.currentData.ajaxMethod === 'getFavouriteProducts') {
+              page.showNoResult(app.translate('product_fav_empty_message', 'Your favorites list is empty.'));
+              return false;
+            }
+
+            page.showNoResult();
           } else {
             page.hideNoResult();
           }
@@ -70,7 +75,7 @@ qaalog.controller('browseProduct', ['$scope','network', 'page', 'config', 'devic
       if (typeof $scope.unwatch === 'function') {
         $scope.unwatch();
       }
-
+      $scope.favorites = [];
       $scope.productList = [];
     });
     
@@ -96,6 +101,9 @@ qaalog.controller('browseProduct', ['$scope','network', 'page', 'config', 'devic
           } else {
             $scope.loadDownHidden = false;
           }
+          if (response.length < 1 && (!$scope.currentData.ajaxMethod || $scope.currentData.ajaxMethod === 'getFavouriteProducts') ) {
+            page.setNoResultText(app.translate('product_fav_empty_message','Your favorites list is empty.'));
+          }
         } else {
 
         }
@@ -118,13 +126,34 @@ qaalog.controller('browseProduct', ['$scope','network', 'page', 'config', 'devic
               page.navigatorPop();
             },500);
           }
-          callback(httpAdapter.convert(response));
-          if (response.length < (pagerOptions.maxRows || 75) ) {
-            $scope.loadDownHidden = true;
-          } else {
-            $scope.loadDownHidden = false;
-          }
-          page.hideLoader();
+          var normalizedResponse = httpAdapter.convert(response);
+
+            $scope.getFavouriteProducts({startRow: 1, maxRows: 500}, function (favorites) {
+              $scope.favorites = favorites;
+
+              for (var i in $scope.favorites) {
+                var favorite = $scope.favorites[i];
+                for (var n in $scope.productList) {
+                  var product = $scope.productList[n];
+                  if (favorite.barcode === product.barcode) {
+                    product.currentLike = 1;
+                    break;
+                  }
+
+                }
+              }
+              console.log($scope.productList,favorites);
+
+            });
+
+            callback(normalizedResponse);
+            if (response.length < (pagerOptions.maxRows || 75) ) {
+              $scope.loadDownHidden = true;
+            } else {
+              $scope.loadDownHidden = false;
+            }
+            page.hideLoader();
+
         } else {
           
         }

@@ -3,7 +3,10 @@
   
   <div class="group" ng-repeat="item in charsValueList" ng-class="{'opened': item.hidden}">
     <div class="category-title" ng-fast-touch="openCharValueList(item)">{{::item.value}}
-        <span class="loader-white-wrap" ng-show="item.isLoading"><img src="img/qaalog_loader_128_2.gif" class="loader-small-blue"/></span></div>
+      <span class="loader-white-wrap" ng-show="item.isLoading">
+      <!-- <img src="img/qaalog_loader_128_2.gif" class="loader-small-blue"/> -->
+      </span>
+    </div>
     <div class="grouped-prod-wrap" 
          ng-repeat="charValue in item.charValueList" 
          ng-fast-touch="showProductDetail(charValue)"

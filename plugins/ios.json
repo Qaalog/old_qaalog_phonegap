@@ -21,6 +21,10 @@
                             "count": 1
                         },
                         {
+                            "xml": "<feature name=\"YoikScreenOrientation\"><param name=\"ios-package\" value=\"YoikScreenOrientation\" /></feature>",
+                            "count": 1
+                        },
+                        {
                             "xml": "<feature name=\"SplashScreen\"><param name=\"ios-package\" value=\"CDVSplashScreen\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         },
@@ -148,6 +152,9 @@
         }
     },
     "installed_plugins": {
+        "com.borismus.webintent": {
+            "PACKAGE_NAME": "com.qaalog.dev"
+        },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.qaalog.dev"
         },
@@ -157,6 +164,9 @@
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.qaalog.dev"
         },
+        "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "com.qaalog.dev"
+        },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.qaalog.dev"
         },
@@ -164,9 +174,6 @@
             "PACKAGE_NAME": "com.qaalog.dev"
         },
         "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.qaalog.dev"
-        },
-        "com.borismus.webintent": {
             "PACKAGE_NAME": "com.qaalog.dev"
         },
         "nl.x-services.plugins.socialsharing": {

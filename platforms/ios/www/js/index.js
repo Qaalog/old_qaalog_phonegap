@@ -38,15 +38,14 @@ var app = {
         app.xmlParse(function(){
         app.wrapper = document.getElementsByClassName('content-wrapper')[0];
         app.wrapper.style.height = window.innerHeight+'px';
-        
         //validateLanguages('pt');
-        
+        screen.lockOrientation('portrait');
         angular.bootstrap(document, ['qaalog']);
         window.open = cordova.InAppBrowser.open;
         console.log(device);
         });
     },
-    
+
     resize: function () {
       var width = window.innerWidth;
       var body = document.getElementsByTagName("body")[0];
@@ -67,6 +66,39 @@ var app = {
       //console.log('error',target);
     },
 
+    onImgLoaded: function(target) {
+      target.style.height = '';
+      var width = window.innerWidth;
+      var height = window.innerHeight;
+      
+      if (navigator.userAgent.toLowerCase().indexOf('android') > -1) {
+        width = screen.width;
+        height = screen.height;
+      }
+      
+      if (navigator.userAgent.toLowerCase().indexOf('windows') > -1) {
+        width = 768;
+        height = 1280;
+      }
+      
+      console.log('height: '+height, 'width: '+width, height+'x'+width, target.height, target.width);
+
+      var heightRatio = height / target.height;
+      var newWidth = target.width * heightRatio;
+
+
+      if (newWidth <= width) {
+        console.log('IN HEIGHT', height + 'px');
+        target.style.height = height + 'px';
+      } else {
+        var widthRatio = width / target.width;
+        newWidth = target.height * widthRatio;
+        console.log('IN WIDTH', (target.height * widthRatio) + 'px');
+        target.style.height = newWidth + 'px';
+      }
+
+    },
+
     xmlParse: function(callback) {
       callback = callback || function(){};
       var xmlhttp = new XMLHttpRequest();
@@ -84,14 +116,23 @@ var app = {
       xmlhttp.send();
     },
 
-    translate: function(key){
-        
+    translate: function(key, defaultValue){
+      defaultValue = defaultValue || '';
       var value = null;
       if (app.stringXML) {
+        var element = app.stringXML.getElementsByName(key)[0];
+        if (!element) {
+          console.log('default');
+          return defaultValue;
+        }
           
         try {
-          value = app.stringXML.getElementsByName(key)[0].childNodes[0].data;
-        } catch(e){console.error(e)}
+          value = element.childNodes[0].data;
+          if (value === '%NULL%') return defaultValue;
+        } catch(e){
+          console.error(e);
+          return defaultValue;
+        }
         console.log('VALUE >>>>>> ',value);
       }
       return value;

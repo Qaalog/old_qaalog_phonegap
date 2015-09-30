@@ -21,6 +21,11 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
     var imgHeight = Math.round(device.emToPx(20));
     var readPCVs;
     var tree;
+
+    $scope.scanButtonTitle = app.translate('barcode_input_info_button','Press scan button');
+    $scope.inputTitle = app.translate('barcode_input_info_number','or type barcode number');
+    $scope.scanButtonLabel = app.translate('barcode_button_scan_label','scan');
+
     $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
     $scope.imgSufix = '&w='+imgWidth+'&h='+imgHeight;
     $scope.elementHeight;
@@ -90,14 +95,17 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
       
       getCatalogConfig($scope.currentParams,function(catalogConfig){
 
-        $scope.tabs = [{name: 'list', value: 'list'}];
+        $scope.tabs = [{name: 'list', value: app.translate('main_menu_option_list','List')}];
         $scope.catalogConfig = {};
         for (var i in catalogConfig) {
           var item = catalogConfig[i];
           $scope.catalogConfig[item.key] = item.value;
-          if (item.key === 'toggle_characteristic_group') $scope.tabs.splice(1,0,{name: 'browse', value: 'browse'});
-          if (item.key === 'has_barcode') $scope.tabs.push({name: 'barcode', value: 'barcode'});
-          if (item.key === 'proximity_meters') $scope.tabs.push({name: 'nearMe', value: 'near me'});
+          if (item.key === 'toggle_characteristic_group')
+            $scope.tabs.splice(1,0,{name: 'browse', value: app.translate('main_menu_option_product_tree','Browse')});
+          if (item.key === 'has_barcode')
+            $scope.tabs.push({name: 'barcode', value: app.translate('main_menu_option_barcode','Barcode')});
+          if (item.key === 'proximity_meters')
+            $scope.tabs.push({name: 'nearMe', value: app.translate('main_menu_option_near','Near me')});
         }
         page.setTabs($scope.tabs);
 
@@ -346,7 +354,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
             } catch (e){};
             $timeout(function(){
               page.hideExtendedHeader();
-              page.setNoResultText('Sorry, there are no data in the catalog');
+              page.setNoResultText(app.translate('main_menu_option_no_data_in_catalog','Sorry, there are no data in the catalog'));
               page.hideMenu();
               page.hideSearch();
               page.setResultsTitle('No results for ');
@@ -354,7 +362,11 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
           }
           if (response.length < 1) {
             page.setResultsTitle('No results for ');
-            page.setNoResultText('No results found for: ' + $scope.localSearchTerm);
+            if ($scope.localSearchTerm) {
+              page.setNoResultText( (app.translate('main_menu_option_no_result_found_for','No results found for')) + ': ' + $scope.localSearchTerm);
+            } else {
+              page.setNoResultText(app.translate('main_menu_option_no_data_in_catalog','Sorry, there are no data in the catalog'));
+            }
           }
           for (var i in response) {
             var item = response[i];
@@ -384,12 +396,12 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
           $timeout(function(){
             if (device.isAndroid()) {
               try {
-                window.plugins.AndroidDialog.locationDialog(app.translate('product_near_location_off_title')
-                  ,app.translate('product_near_location_off_message'));
+                window.plugins.AndroidDialog.locationDialog(app.translate('product_near_location_off_title','No service')
+                  ,app.translate('product_near_location_off_message','This functionality requires location services on. Would you like to open location settings?'));
               } catch (e) {}
             }
             page.hideLoader();
-            page.showNoResult(app.translate('product_near_no_location_message'));
+            page.showNoResult(app.translate('product_near_no_location_message','Couldn\'t get your location :('));
             page.setOnNoResultClick(function(){
               page.hideNoResult();
               page.showLoader();
@@ -411,7 +423,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
             page.hideNoResult();
             if (response.length < 1) {
               page.hideLoader();
-              page.showNoResult(app.translate('product_near_no_results_message').replace('%s',$scope.catalogConfig['proximity_meters'] || 50000));
+              page.showNoResult(app.translate('product_near_no_results_message','Nothing found in a vicinity of %s meters from you :(').replace('%s',$scope.catalogConfig['proximity_meters'] || 50000));
               return false;
             }
             for (var i in response) {
@@ -576,7 +588,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
       pager.stopPager();
       pager.startPager($scope.pagerOptions);
       $scope.resultVisiable = false;
-      page.setResultsTitle('Results for ');
+      page.setResultsTitle(app.translate('main_menu_option_result_for','Result for') +' ');
       if (!navigatorFlag) {
         navigatorFlag = true;
         page.navigatorPush(function () {
@@ -676,7 +688,7 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
               $scope.currentBarcodeItem = false;
             }
             if ($scope.barcodeAutocomplete.length < 1 && !$scope.barcodeFlag) {
-              $scope.barcodeAutocomplete.push({groupName: 'No result found'});
+              $scope.barcodeAutocomplete.push({groupName: app.translate('barcode_input_no_results', 'No results found')});
             }
             console.log('BARCODE', $scope.barcodeAutocomplete);
           });
@@ -767,6 +779,9 @@ qaalog.controller('products', ['$scope','network', 'page', 'config', 'device',
     };
 
     $scope.onBarcodeKeyPress = function(event) {
+      if (!$scope.barcode.value || $scope.barcode.value === null || $scope.barcode.value === '') {
+        $scope.barcodeAutocomplete = [];
+      }
       if (event.keyCode === 13) {
           if (device.isIOS())
             document.getElementById('barcode-input').blur();

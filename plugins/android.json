@@ -51,6 +51,10 @@
                         {
                             "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"YoikScreenOrientation\"><param name=\"android-package\" value=\"net.yoik.cordova.plugins.screenorientation.YoikScreenOrientation\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -632,6 +636,9 @@
             "PACKAGE_NAME": "com.qaalog.dev1"
         },
         "org.apache.cordova.dialogs": {
+            "PACKAGE_NAME": "com.qaalog.dev"
+        },
+        "cordova-plugin-screen-orientation": {
             "PACKAGE_NAME": "com.qaalog.dev"
         }
     },

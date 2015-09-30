@@ -55,9 +55,11 @@
     <body ng-controller="main">
       <div class="search-background"
            style="position: absolute; top:0;left:0;bottom:0;right:0;background: rgba(0,0,0,0.5);z-index:1;"
+           ng-fast-touch="stopBlurSearching();searchModel.value = '';"
            ng-show="isSearchPanelVisiable"></div>
       <header class="header" ng-swipe-header ng-class="{'ios':isIOS()}" ng-hide="headerIsHidden">
         <div class="top-wrap" id="top-wrap">
+          <div class="back-btn-trigger" ng-fast-touch="onBack()" ng-show="canBack"></div>
           <span class="back-btn q-icons-back" ng-fast-touch="onBack()" ng-show="canBack"></span>
           <span class="search-btn q-icons-search" ng-show="canSearch"></span>
           <span class="share-btn q-icons-share" ng-fast-touch="share()" ng-show="canShare"></span>

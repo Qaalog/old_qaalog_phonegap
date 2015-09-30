@@ -14,10 +14,10 @@ qaalog.controller('catalog', ['$rootScope','$scope','network', 'page', 'config',
     $scope.scrollPosition;
 
     $scope.rows = {};
-    $scope.def = 'Generic';
-    $scope.FAVORITE_DEF = 'Favorites';
-   // $scope.def = app.translate('catalog_selection_default_tag');
-   // $scope.FAVORITE_DEF = app.translate('catalog_selection_favorite_tag');
+    //$scope.def = 'Generic';
+    //$scope.FAVORITE_DEF = 'Favorites';
+    $scope.def = app.translate('catalog_selection_default_tag','Generic');
+    $scope.FAVORITE_DEF = app.translate('catalog_selection_favorite_tag','Favorites');
     $scope.self = { 'name':  'catalog'
                   , 'title': 'Qaalog'
                   , 'back':  false

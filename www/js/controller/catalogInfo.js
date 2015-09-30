@@ -2,7 +2,7 @@ qaalog.controller('catalogInfo',['$scope','page','$sce',function($scope,page,$sc
     
     
     var settings = { name:   'catalogInfo'
-                   , title:  'Catalog Information'
+                   , title:  app.translate('catalog_selection_catalog_info_title','Catalog Information')
                    , back:   true
                    , menu:   true
                    };

@@ -8,8 +8,10 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     var onTabChange;
     
     $scope.imgPrefix = network.servisePath+'GetResizedImage?i=';
+    var imgWidth = Math.round(device.emToPx(38));
     var imgHeight = Math.floor(device.emToPx(20));
-    $scope.imgSufix = '&w=768&h=464'//+imgHeight;
+    $scope.imgSufix = '&w=710&h=456';//'&w=768&h=464'//+imgHeight;
+    $scope.imgRelatedSufix = '&w='+imgWidth+'&h='+imgHeight;
     $scope.imgGallerySufix = '&w=768&h=495';
     
     
@@ -24,7 +26,8 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     page.onShow(settings,function(params) {
       $scope.detailsLoaded = false;
       page.showLoader();
-      page.setTabs([{name: 'detail', value: 'details'},{name: 'related', value: 'related'}]);
+      page.setTabs([{name: 'detail', value: app.translate('product_detail_tab_detail_title','Detail')},
+        {name: 'related', value: app.translate('product_detail_tab_related_title','Related')}]);
       page.onTabChange = onTabChange;
       $scope.currentParams = params;
       console.log('params detail',params);
@@ -272,6 +275,8 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
       }
       
       $scope.galleryStarted = true;
+      if (screen.unlockOrientation)
+        screen.unlockOrientation();
       page.navigatorPush($scope.stopGallery);
     };
     
@@ -309,6 +314,37 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
         return false;
       //}
     };
+    
+    $scope.$on('orientationchange',function(){
+      var orientation = screen.orientation.type || screen.orientation;
+      var height = (device.isIOS()) ? innerHeight : screen.height;
+      if (orientation.toLowerCase().indexOf('landscape') > -1) {
+        $timeout(function(){
+          $scope.isLandscape = true;
+          document.querySelector('.gallery-wrap.screen-gallery').style.height = height + 'px';
+          var wraps = document.querySelectorAll('.prod-gallery-screen');
+          for (var i = 0, l = wraps.length; i < l; i++) {
+            wraps[i].style.height = height + 'px';
+            console.log(wraps[i].style.height);
+          }
+        });
+      } else {
+        $timeout(function(){
+          $scope.isLandscape = false;
+          document.querySelector('.gallery-wrap.screen-gallery').style.height = '';
+          var wraps = document.querySelectorAll('.prod-gallery-screen');
+          for (var i = 0, l = wraps.length; i < l; i++) {
+            wraps[i].style.height = '';
+          }
+        });
+      }
+      var imgs = document.querySelectorAll('.prod-gallery-screen img');
+      for (var i = 0, l = imgs.length; i < l; i++) {
+        var img = imgs[i];
+        app.onImgLoaded(img);
+      }
+      console.log('orientation',orientation,$scope.isLandscape,orientation.toLowerCase().indexOf('landscape'));
+    });
 
     $scope.navigateStopedGallery = function(index) {
       $scope.renderStarted = true;
@@ -325,6 +361,9 @@ qaalog.controller('productDetail',['$scope','page','network','httpAdapter','$tim
     };
     
     $scope.stopGallery = function() {
+      if (screen.lockOrientation)
+        screen.lockOrientation('portrait');
+      
       page.setHeaderVisiable(true);
       page.setPageScrollable(true);
       

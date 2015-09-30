@@ -20,7 +20,7 @@
 //  main.m
 //  Qaalog
 //
-//  Created by ___FULLUrSERNAME___ on ___DATE___.
+//  Created by ___FULLUSERNAME___ on ___DATE___.
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
 

@@ -13,6 +13,7 @@ body {
 .barcode-wrap button,
 .statusbar,
 .control-nav li,
+.control-nav-screen li,
 .gallery-wrap .close {color: #fff;}
 .category-title {
 	background: #33a9cd;
@@ -58,6 +59,7 @@ input.search {background: #c2e2ef;}
 .search-close {color: #38a2c6;}
 .search-item:before, 
 .menu-wrap li:before,
+.control-nav-screen li.active,
 .control-nav li.active,
 .barcode-wrap .search-item span {color: #4bbee1;}
 .search-result-title {color: #9a9a9a;}

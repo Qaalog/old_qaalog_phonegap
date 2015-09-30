@@ -37,7 +37,6 @@ function BrowseTree() {
           if (!parent) parent = angular.element(element.parentElement);
           var elementEl = angular.element(element);
           var elementScope = elementEl.scope();
-
           elementEl.injector().invoke(function($compile){
             var compiledElement = $compile(newLayout)(elementScope);
             elementEl.after(compiledElement);

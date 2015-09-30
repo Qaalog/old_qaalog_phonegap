@@ -118,6 +118,7 @@ qaalog.directive('ngSwipe', function() {
     });
     
     element.on('touchend', function(event) {
+      curCoords = {x: event.changedTouches[0].screenX, y: event.changedTouches[0].screenY};
       var diffX = curCoords.x - coords.x;
       var diffY = curCoords.y - coords.y;
 
@@ -132,13 +133,15 @@ qaalog.directive('ngSwipe', function() {
       }
       
       if (diffY > 100) {
+        console.log(diffY, curCoords.y, coords.y);
         scope.$direction = 0;
-        fnUp();
+        fnDown();
       }
       
       if (diffY < -100) {
+        console.log(diffY, curCoords.y, coords.y);
         scope.$direction = 1;
-        fnDown();
+        fnUp();
       }
       
     });

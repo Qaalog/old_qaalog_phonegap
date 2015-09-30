@@ -1,4 +1,4 @@
-qaalog.service('device',[function(){
+qaalog.service('device',['$rootScope',function($rootScope){
   var $device = this;
   
   var device = window.device || {};
@@ -66,6 +66,10 @@ qaalog.service('device',[function(){
   $device.isWindowsPhone = function() {
     return (currentPlatform === 'WindowsPhone') ? true : false;
   };
+  
+  window.addEventListener("orientationchange", function(){
+    $rootScope.$broadcast('orientationchange');
+  });
   
 }]);
 

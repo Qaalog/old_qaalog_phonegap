@@ -21,9 +21,9 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     $scope.catalogTitleVisiable = true;
     $scope.noResultText = 'No results found';
     $scope.resultsTitle = 'Results for ';
-    $scope.selectionTitle = 'Select catalog to use';
+    //$scope.selectionTitle = 'Select catalog to use';
 
-   // $scope.selectionTitle = app.translate('catalog_selection_subtitle');
+    $scope.selectionTitle = app.translate('catalog_selection_subtitle','Select catalog to use');
     if (navigator.connection) {
       $scope.connection = navigator.connection;
       $scope.$watch('connection.type',function(value) {
@@ -315,11 +315,11 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     };
 
     $scope.stopBlurSearching = function(value) {
-      console.log('$scope.searchModel.value',value);
-      if (!value) {
+     // console.log('$scope.searchModel.value',value);
+     // if (!value) {
         $scope.stopSearching();
         page.navigatorPop();
-      }
+     // }
     };
     
     $scope.completeSearchValue = function(tip) {
@@ -383,8 +383,8 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
       if (text) {
         page.setNoResultText(text);
         return true;
-      };
-      page.setNoResultText('Nothing found');
+      }
+      page.setNoResultText(app.translate('messages_nothing_found','Nothing found'));
     };
     
     page.hideNoResult = function(){
@@ -403,8 +403,14 @@ qaalog.controller('main',['$rootScope','$scope','page','search','network','confi
     };
 
     $scope.onSearchInputFocus = function() {
-      $scope.startSearching();
       console.log('!!!FOCUS!!!');
+      if (device.isIOS()) {
+        $scope.startSearching();
+        return false;
+      }
+      $timeout(function(){
+        $scope.startSearching();
+      },100);
     };
 
     $timeout(function(){
